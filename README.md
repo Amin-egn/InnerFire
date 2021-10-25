@@ -1,2 +1,2 @@
 # InnerFire
-Import to DataBase from an Excel file
+Import to Data Base from an Excel file
