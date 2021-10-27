@@ -4,17 +4,19 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtGui import QIcon, QFont, QCursor
 
 
-class FButton(QPushButton):
+class FireButton(QPushButton):
     """Basic Button"""
     width = 75
     height = 23
     alt = ''
-    font = ''
+    font = 'Lucida console'
     fontSize = 12
-    icon = ''
+    ICON = ''
     iconSize = 16
 
     def __init__(self, *args, **kwargs):
+        self.size = kwargs.pop('size', None)
+        self.icon = kwargs.pop('icon', self.ICON)
         super().__init__(*args, **kwargs)
         self.craftButton(self.width, self.height)
 
@@ -28,3 +30,7 @@ class FButton(QPushButton):
         if self.icon:
             self.setIcon(QIcon(self.icon))
             self.setIconSize(QSize(self.iconSize, self.iconSize))
+
+
+class FlameButton(FireButton):
+    pass
