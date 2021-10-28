@@ -1,13 +1,12 @@
 # internal
-from src.ui.component import BaseWidget, BaseDialog, FButton, TableModel
+from src.ui.component import BaseWidget, BaseDialog, FireButton, TableModel
 # external
 from openpyxl import load_workbook
 # pyqt
 from PyQt5.QtCore import (Qt)
 from PyQt5.QtGui import QLinearGradient
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QPushButton, QHBoxLayout, QFileDialog,
-                             QTableWidget, QTableWidgetItem, QLabel, QTableView, QDialog,
-                             QVBoxLayout)
+                             QLineEdit, QFormLayout, QLabel, QTableView, QVBoxLayout)
 
 
 class MainWindow(QMainWindow):
@@ -30,6 +29,10 @@ class MainWindow(QMainWindow):
         self.generalLayout.setAlignment(Qt.AlignTop)
         # excel response
         self.excelResponse = ExcelResponse()
+        # database response
+        self.dbResponse = DbResponse()
+        # database table
+        self.dbTable = DbTables()
         # attach
         self._mainWidget.setLayout(self.generalLayout)
         self.actionButtons()
@@ -42,18 +45,6 @@ class MainWindow(QMainWindow):
             MainWindow {
                 background: #fcfcfc;
             }
-            #Buttons {
-                border: none;
-                color: #777777;
-            }
-            #Buttons:hover {
-                border: 1px solid #66b071;
-                border-radius: 20px;
-                color: #111111;
-            }
-            #Buttons:pressed {
-                border-color: #3d9049;
-            }
             #Table {
                 border: 2px dot-dash #3d9049;
             }
@@ -65,15 +56,9 @@ class MainWindow(QMainWindow):
         self.buttonsLayout.setContentsMargins(0, 10, 0, 0)
         self.buttonsLayout.setAlignment(Qt.AlignHCenter)
         # excel button
-        self.btnExcel = FButton('Read Excel', icon='./src/ui/resources/spreadsheet.png')
-        self.btnExcel.setObjectName('Buttons')
-        self.btnExcel.iconSize = 24
-        self.btnExcel.craftButton(200, 40)
+        self.btnExcel = FireButton('Read Excel', icon='./src/ui/resources/spreadsheet.png')
         # data base button
-        self.btnDb = FButton('Query Data-Base', icon='./src/ui/resources/database.png')
-        self.btnDb.setObjectName('Buttons')
-        self.btnDb.iconSize = 24
-        self.btnDb.craftButton(200, 40)
+        self.btnDb = FireButton('Query Data-Base', icon='./src/ui/resources/database.png')
         # attach
         self.buttonsLayout.addWidget(self.btnExcel)
         self.buttonsLayout.addWidget(self.btnDb)
@@ -93,13 +78,11 @@ class MainWindow(QMainWindow):
     def castButton(self):
         # cast layout
         self.castLayout = QHBoxLayout()
-        self.castLayout.setContentsMargins(0, 10, 0, 0)
+        self.castLayout.setContentsMargins(0, 10, 0, 5)
         # cast label
         self.lblCast = QLabel('You should select excel and sql table that you want to cast =)')
         # cast button
-        self.btnCast = FButton('Cast!')
-        self.btnCast.setObjectName('Buttons')
-        self.btnCast.craftButton(200, 40)
+        self.btnCast = FireButton('Cast!')
         # attach
         self.castLayout.addWidget(self.lblCast)
         self.castLayout.addWidget(self.btnCast)
@@ -107,22 +90,29 @@ class MainWindow(QMainWindow):
 
     def connectedSignals(self):
         self.btnExcel.clicked.connect(self.excelResponse.openExcel)
+        self.btnDb.clicked.connect(self.dbResponse.show)
 
 
 class ExcelResponse(BaseDialog):
-    """Excel Handler"""
+    """Excel Responsible"""
     def craftDialog(self):
+        # self modification
+        self.setWindowTitle('Excel Titles')
+        self.setFixedWidth(320)
+        # excel table
         self.tblExcel = QTableView()
         # done button
-        self.btnDone = FButton('Done')
-        self.btnDone.craftButton(200, 40)
+        self.btnDoneLayout = QHBoxLayout()
+        self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
+        self.btnDone = FireButton('Done')
         # attach
         self.generalLayout.addWidget(self.tblExcel)
-        self.generalLayout.addWidget(self.btnDone)
+        self.btnDoneLayout.addWidget(self.btnDone)
+        self.generalLayout.addLayout(self.btnDoneLayout)
 
     def openExcel(self):
+        # empty list
         self.titleList = list()
-
         path = QFileDialog.getOpenFileName(
             self, 'Open file', '',
             'Excel files (*.xlsx *.xlsm *.xltx *.xltm)')[0]
@@ -134,65 +124,71 @@ class ExcelResponse(BaseDialog):
 
         self.model = TableModel(['Excel Titles'], self.titleList)
         self.tblExcel.setModel(self.model)
+        self.tblExcel.setColumnWidth(0, 257)
 
         if self.titleList:
             self.show()
 
-
-
-class RemoveSoon(BaseWidget):
-    """Excel Handler"""
-    def craftWidget(self):
-        self.btnRead = FButton('Read Excel')
-        self.btnRead.craftButton(120, 35)
-
-        self.tblExcel = QTableView()
-
-        self.generalLayout.addWidget(self.tblExcel)
-        self.generalLayout.addWidget(self.btnRead)
-
-    def openExcel(self):
-        self.titleList = list()
-
-        path = QFileDialog.getOpenFileName(
-            self, 'Open file', '',
-            'Excel files (*.xlsx)')[0]
-        if path:
-            wb = load_workbook(path)
-            sheet = wb.active
-            for cell in sheet.iter_cols(max_row=1, values_only=True):
-                self.titleList.append(list(cell))
-
-        self.model = TableModel(['Excel Titles'], self.titleList)
-        self.tblExcel.setModel(self.model)
-
-    def craftStyle(self):
+    def craftStyles(self):
         self.setStyleSheet("""
-            QPushButton {
-                background: QLinearGradient(
-                x1: 1 y1: 1,
-                x2: 0 y2: 0,
-                stop: 1 #c2e59c,
-                stop: 0 #64b3f4
-                );
-                border: 1px solid #ccc;
-                color: #555;
-            }
-            QPushButton:hover {
-                background: QLinearGradient(
-                x1: 1 y1: 1,
-                x2: 0 y2: 0,
-                stop: 1 #64b3f4,
-                stop: 0 #c2e59c
-                );
-                border-color: #888;
-                color: #222;
-            }
-            QPushButton:pressed {
-                border-style: double;
-                color: #000
+            ExcelResponse {
+                background: #fcfcfc;
             }
         """)
 
+
+class DbResponse(BaseDialog):
+    """Database Responsible"""
+    def craftDialog(self):
+        # self modification
+        self.setFixedWidth(380)
+        self.setWindowTitle('Data-base Information')
+        # form layout
+        self.dataBaseLayout = QFormLayout()
+        # add widgets
+        self.dataBaseLayout.addRow('Server:', QLineEdit())
+        self.dataBaseLayout.addRow('Username:', QLineEdit())
+        self.dataBaseLayout.addRow('Password:', QLineEdit(echoMode=QLineEdit.EchoMode.Password))
+        self.dataBaseLayout.addRow('Database name:', QLineEdit())
+        # button layout
+        self.btnLayout = QHBoxLayout()
+        self.btnLayout.setContentsMargins(0, 10, 0, 0)
+        self.btnConnect = FireButton('Connect')
+        # attach
+        self.btnLayout.addWidget(self.btnConnect)
+        self.generalLayout.addLayout(self.dataBaseLayout)
+        self.generalLayout.addLayout(self.btnLayout)
+
     def connectSignals(self):
-        self.btnRead.clicked.connect(self.openExcel)
+        pass
+
+    def craftStyles(self):
+        self.setStyleSheet("""
+            DbResponse {
+                background: #fcfcfc;
+            }
+        """)
+
+
+class DbTables(BaseDialog):
+    """Database Tables"""
+    def craftDialog(self):
+        # self modification
+        self.setWindowTitle('Data-base Tables')
+        # database table
+        self.tblDb = QTableView()
+        # done button
+        self.btnDoneLayout = QHBoxLayout()
+        self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
+        self.btnDone = FireButton('Done')
+        # attach
+        self.generalLayout.addWidget(self.tblDb)
+        self.btnDoneLayout.addWidget(self.btnDone)
+        self.generalLayout.addLayout(self.btnDoneLayout)
+
+    def craftStyles(self):
+        self.setStyleSheet("""
+            DbTables {
+                background: #fcfcfc;
+            }
+        """)
