@@ -145,11 +145,16 @@ class DbResponse(BaseDialog):
         self.setWindowTitle('Data-base Information')
         # form layout
         self.dataBaseLayout = QFormLayout()
+        # inputs
+        self.serverInput = QLineEdit()
+        self.usernameInput = QLineEdit()
+        self.passwordInput = QLineEdit(echoMode=QLineEdit.EchoMode.Password)
+        self.dbnameInput = QLineEdit()
         # add widgets
-        self.dataBaseLayout.addRow('Server:', QLineEdit())
-        self.dataBaseLayout.addRow('Username:', QLineEdit())
-        self.dataBaseLayout.addRow('Password:', QLineEdit(echoMode=QLineEdit.EchoMode.Password))
-        self.dataBaseLayout.addRow('Database name:', QLineEdit())
+        self.dataBaseLayout.addRow('Server:', self.serverInput)
+        self.dataBaseLayout.addRow('Username:', self.usernameInput)
+        self.dataBaseLayout.addRow('Password:', self.passwordInput)
+        self.dataBaseLayout.addRow('Database name:', self.dbnameInput)
         # button layout
         self.btnLayout = QHBoxLayout()
         self.btnLayout.setContentsMargins(0, 10, 0, 0)
@@ -159,8 +164,17 @@ class DbResponse(BaseDialog):
         self.generalLayout.addLayout(self.dataBaseLayout)
         self.generalLayout.addLayout(self.btnLayout)
 
+    def connList(self):
+        self.inputList = [
+            self.serverInput.text(),
+            self.usernameInput.text(),
+            self.passwordInput.text(),
+            self.dbnameInput.text()
+        ]
+        return self.inputList
+
     def connectSignals(self):
-        pass
+        self.btnConnect.clicked.connect(self.connList)
 
     def craftStyles(self):
         self.setStyleSheet("""

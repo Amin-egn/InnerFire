@@ -1,4 +1,5 @@
 # internal
+from src import Controller
 from src.ui import MainWindow
 # standard
 import sys
@@ -10,6 +11,7 @@ def main():
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
+    controller = Controller(window)
     sys.exit(app.exec())
 
 
