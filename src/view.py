@@ -15,18 +15,20 @@ class View(object):
         self.connectSignals()
 
     def dbRes_handler(self):
-        self.l = self.dbRes.inputList
-        self.createConn = CreateConnection(self.l)
-        self.dbRes.close()
-        self.dbTbl.show()
-        self.model = QSqlTableModel()
-        self.dbTbl.tblDb.setModel(self.model)
-        self.query = QSqlQuery("""
-            SELECT TABLE_NAME
-            FROM INFORMATION_SCHEMA.TABLES
-            WHERE TABLE_TYPE='BASE TABLE'
-        """)
-        self.model.setQuery(self.query)
+        conn_params = self.dbRes.inputList
+
+        if all(conn_params):
+            self.createConn = CreateConnection(conn_params)
+            self.dbRes.close()
+            self.dbTbl.show()
+            self.model = QSqlTableModel()
+            self.dbTbl.listTables.setModel(self.model)
+            self.query = QSqlQuery("""
+                SELECT TABLE_NAME
+                FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_TYPE='BASE TABLE'
+            """)
+            self.model.setQuery(self.query)
 
     def connectSignals(self):
         self.btnDbConnection.clicked.connect(self.dbRes_handler)

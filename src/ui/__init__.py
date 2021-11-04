@@ -1,12 +1,13 @@
 # internal
-from src.ui.component import BaseWidget, BaseDialog, FireButton, TableModel
+from src.ui.component import (BaseWidget, BaseDialog, FireButton, TableModel,
+                              ListModel)
 # external
 from openpyxl import load_workbook
 # pyqt
 from PyQt5.QtCore import (Qt)
 from PyQt5.QtGui import QLinearGradient
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QPushButton, QHBoxLayout, QFileDialog,
-                             QLineEdit, QFormLayout, QLabel, QTableView, QVBoxLayout)
+                             QLineEdit, QFormLayout, QLabel, QTableView, QVBoxLayout, QListView)
 
 
 class MainWindow(QMainWindow):
@@ -100,13 +101,13 @@ class ExcelResponse(BaseDialog):
         self.setWindowTitle('Excel Titles')
         self.setFixedWidth(320)
         # excel table
-        self.tblExcel = QTableView()
+        self.lstExcel = QListView()
         # done button
         self.btnDoneLayout = QHBoxLayout()
         self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
         self.btnDone = FireButton('Done')
         # attach
-        self.generalLayout.addWidget(self.tblExcel)
+        self.generalLayout.addWidget(self.lstExcel)
         self.btnDoneLayout.addWidget(self.btnDone)
         self.generalLayout.addLayout(self.btnDoneLayout)
 
@@ -120,11 +121,12 @@ class ExcelResponse(BaseDialog):
             wb = load_workbook(path)
             sheet = wb.active
             for cell in sheet.iter_cols(max_row=1, values_only=True):
-                self.titleList.append(list(cell))
+                index = cell[0]
+                strip_index = index.strip()
+                self.titleList.append(strip_index)
 
-        self.model = TableModel(['Excel Titles'], self.titleList)
-        self.tblExcel.setModel(self.model)
-        self.tblExcel.setColumnWidth(0, 257)
+        self.model = ListModel(self.titleList)
+        self.lstExcel.setModel(self.model)
 
         if self.titleList:
             self.show()
@@ -166,10 +168,10 @@ class DbResponse(BaseDialog):
 
     def connList(self):
         self.inputList = [
-            self.serverInput.text(),
-            self.usernameInput.text(),
-            self.passwordInput.text(),
-            self.dbnameInput.text()
+            self.serverInput.text().strip(),
+            self.usernameInput.text().strip(),
+            self.passwordInput.text().strip(),
+            self.dbnameInput.text().strip()
         ]
         return self.inputList
 
@@ -189,15 +191,15 @@ class DbTables(BaseDialog):
     def craftDialog(self):
         # self modification
         self.setWindowTitle('Data-base Tables')
-        # database table
-        self.tblDb = QTableView()
+        # tables list
+        self.listTables = QListView()
         # done button
         self.btnDoneLayout = QHBoxLayout()
         self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
         self.btnDone = FireButton('Done')
         # attach
-        self.generalLayout.addWidget(self.tblDb)
         self.btnDoneLayout.addWidget(self.btnDone)
+        self.generalLayout.addWidget(self.listTables)
         self.generalLayout.addLayout(self.btnDoneLayout)
 
     def craftStyles(self):
