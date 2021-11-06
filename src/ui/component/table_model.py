@@ -13,14 +13,17 @@ class TableModel(QAbstractTableModel):
     def checkState(self, index):
         if index in self.check.keys():
             return self.check[index]
-        return Qt.Checked
+        else:
+            return Qt.Unchecked
 
     def data(self, index, role):
         row = self._data[index.row()]
         if role == Qt.DisplayRole:
             return row[index.column()]
+
         elif role == Qt.CheckStateRole and index.column() == 0:
             return self.checkState(QPersistentModelIndex(index))
+
         return None
 
     def rowCount(self, index):
@@ -33,15 +36,18 @@ class TableModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if orientation == Qt.Horizontal:
                 return self.header[section]
+
             if orientation == Qt.Vertical:
                 return str(section + 1)
 
     def setData(self, index, value, role):
         if not index.isValid():
             return False
+
         if role == Qt.CheckStateRole:
             self.check[QPersistentModelIndex(index)] = value
             return True
+
         return False
 
     def flags(self, index):

@@ -1,6 +1,6 @@
 # internal
 from src.ui.component import (BaseWidget, BaseDialog, FireButton, TableModel,
-                              ListModel)
+                              ListModel, CheckList)
 # external
 from openpyxl import load_workbook
 # pyqt
@@ -34,6 +34,8 @@ class MainWindow(QMainWindow):
         self.dbResponse = DbResponse()
         # database table
         self.dbTable = DbTables()
+        # database titles
+        self.dbTitles = DbTableTitles()
         # attach
         self._mainWidget.setLayout(self.generalLayout)
         self.actionButtons()
@@ -101,13 +103,13 @@ class ExcelResponse(BaseDialog):
         self.setWindowTitle('Excel Titles')
         self.setFixedWidth(320)
         # excel table
-        self.lstExcel = QListView()
+        self.listExcel = QListView()
         # done button
         self.btnDoneLayout = QHBoxLayout()
         self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
         self.btnDone = FireButton('Done')
         # attach
-        self.generalLayout.addWidget(self.lstExcel)
+        self.generalLayout.addWidget(self.listExcel)
         self.btnDoneLayout.addWidget(self.btnDone)
         self.generalLayout.addLayout(self.btnDoneLayout)
 
@@ -125,8 +127,8 @@ class ExcelResponse(BaseDialog):
                 strip_index = index.strip()
                 self.titleList.append(strip_index)
 
-        self.model = ListModel(self.titleList)
-        self.lstExcel.setModel(self.model)
+        self.model = CheckList(self.titleList)
+        self.listExcel.setModel(self.model)
 
         if self.titleList:
             self.show()
@@ -205,6 +207,30 @@ class DbTables(BaseDialog):
     def craftStyles(self):
         self.setStyleSheet("""
             DbTables {
+                background: #fcfcfc;
+            }
+        """)
+
+
+class DbTableTitles(BaseDialog):
+    """Database Table Titles"""
+    def craftDialog(self):
+        # self modification
+        self.setWindowTitle('Table Titles')
+        # tables list
+        self.listTitles = QListView()
+        # done button
+        self.btnDoneLayout = QHBoxLayout()
+        self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
+        self.btnDone = FireButton('Done')
+        # attach
+        self.btnDoneLayout.addWidget(self.btnDone)
+        self.generalLayout.addWidget(self.listTitles)
+        self.generalLayout.addLayout(self.btnDoneLayout)
+
+    def craftStyles(self):
+        self.setStyleSheet("""
+            DbTableTitles {
                 background: #fcfcfc;
             }
         """)
