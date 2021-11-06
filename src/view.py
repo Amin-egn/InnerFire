@@ -52,7 +52,7 @@ class View(object):
         index = indexes[0] if indexes else None
         if index is not None:
             pass
-        
+
         self.dbTbl.close()
         self.dbTtl.show()
 
