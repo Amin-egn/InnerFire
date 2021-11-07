@@ -39,7 +39,8 @@ class CheckList(ListModel):
             return self.items[index.row()]
 
         if role == Qt.CheckStateRole:
-            return self.checkState(QPersistentModelIndex(index))
+            if index.column() == 0:
+                return Qt.Checked if self.items[index.row()][index.column()] else Qt.Unchecked
 
         return None
 
