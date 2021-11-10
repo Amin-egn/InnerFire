@@ -8,21 +8,11 @@ class TableModel(QAbstractTableModel):
         super().__init__()
         self.header = header
         self._data = data
-        self.check = dict()
-
-    def checkState(self, index):
-        if index in self.check.keys():
-            return self.check[index]
-        else:
-            return Qt.Unchecked
 
     def data(self, index, role):
         row = self._data[index.row()]
         if role == Qt.DisplayRole:
             return row[index.column()]
-
-        elif role == Qt.CheckStateRole and index.column() == 0:
-            return self.checkState(QPersistentModelIndex(index))
 
         return None
 
@@ -40,18 +30,9 @@ class TableModel(QAbstractTableModel):
             if orientation == Qt.Vertical:
                 return str(section + 1)
 
-    def setData(self, index, value, role):
-        if not index.isValid():
-            return False
-
-        if role == Qt.CheckStateRole:
-            self.check[QPersistentModelIndex(index)] = value
-            return True
-
-        return False
-
-    def flags(self, index):
-        flg = QAbstractTableModel.flags(self, index)
-        if index.column() == 0:
-            flg |= Qt.ItemIsUserCheckable
-        return flg
+class DrgDrpTable(TableModel):
+    """Drag and Drop Table"""
+    def data(self, index, role):
+        row = self._data[index.row()]
+        if role == Qt.DisplayRole:
+            return row

@@ -1,13 +1,14 @@
 # internal
 from src.ui.component import (BaseWidget, BaseDialog, FireButton, TableModel,
-                              ListModel, CheckList)
+                              ListModel, CheckList, TableView)
 # external
 from openpyxl import load_workbook
 # pyqt
 from PyQt5.QtCore import (Qt)
 from PyQt5.QtGui import QLinearGradient
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QPushButton, QHBoxLayout, QFileDialog,
-                             QLineEdit, QFormLayout, QLabel, QTableView, QVBoxLayout, QListView)
+                             QLineEdit, QFormLayout, QLabel, QTableView, QVBoxLayout, QListView,
+                             QAbstractItemView)
 
 
 class MainWindow(QMainWindow):
@@ -127,8 +128,9 @@ class ExcelResponse(BaseDialog):
                 strip_index = index.strip()
                 self.titleList.append(strip_index)
 
-        self.model = CheckList(self.titleList)
-        self.listExcel.setModel(self.model)
+        self.modelExcel = CheckList(self.titleList)
+        self.listExcel.setModel(self.modelExcel)
+        self.listExcel.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         if self.titleList:
             self.show()
@@ -195,6 +197,7 @@ class DbTables(BaseDialog):
         self.setWindowTitle('Data-base Tables')
         # tables list
         self.listTables = QListView()
+        self.listTables.setEditTriggers(QAbstractItemView.NoEditTriggers)
         # done button
         self.btnDoneLayout = QHBoxLayout()
         self.btnDoneLayout.setAlignment(Qt.AlignHCenter)

@@ -1,8 +1,7 @@
 # internal
-from src.db import CreateConnection
-from src.ui.component import TableModel
+from src.db import craftConnection
+from src.ui.component import TableModel, DrgDrpTable
 # pyqt
-from PyQt5.Qt import QModelIndex
 from PyQt5.QtSql import QSqlQuery, QSqlTableModel
 
 
@@ -29,32 +28,46 @@ class View(object):
 
         if all(conn_params):
             try:
-                self.createConn = CreateConnection(conn_params)
-                self.dbRes.close()
-                self.dbTbl.show()
-                self.model = QSqlTableModel()
-                self.dbTbl.listTables.setModel(self.model)
-                self.query = QSqlQuery("""
-                    SELECT TABLE_NAME
-                    FROM INFORMATION_SCHEMA.TABLES
-                    WHERE TABLE_TYPE='BASE TABLE'
-                """)
-                self.model.setQuery(self.query)
+                self.createConn = craftConnection(conn_params)
+                if self.createConn:
+                    self.dbRes.close()
+                    self.dbTbl.show()
+                    self.modelConn = QSqlTableModel()
+                    self.dbTbl.listTables.setModel(self.modelConn)
+                    self.queryConn = QSqlQuery("""
+                        SELECT TABLE_NAME
+                        FROM INFORMATION_SCHEMA.TABLES
+                        WHERE TABLE_TYPE='BASE TABLE'
+                    """)
+                    self.modelConn.setQuery(self.queryConn)
             except Exception as e:
                 print(str(e))
 
     def exlRes_emit_table(self):
-        for k, v in self.exlRes.model.checks.items():
-            print(f'{k} -> {v}')
+        self.checkedItems = list()
+        for i in sorted(self.exlRes.modelExcel.checkList):
+            self.checkedItems.append(self.exlRes.modelExcel.items[i])
+
+        self.modelDrgDrp = DrgDrpTable(['Excel Titles'], self.checkedItems)
+        self.ui.tableWidget.setModel(self.modelDrgDrp)
 
     def table_titles_handler(self):
-        indexes = self.listTables.selectedIndexes()
-        index = indexes[0] if indexes else None
+        indexes = self.dbTbl.listTables.selectedIndexes()
+        index = indexes[0].row() if indexes else None
         if index is not None:
-            pass
-
-        self.dbTbl.close()
-        self.dbTtl.show()
+            try:
+                self.dbTbl.close()
+                self.dbTtl.show()
+                self.modelTitle = QSqlTableModel()
+                self.dbTtl.listTitles.setModel(self.modelTitle)
+                self.queryTable = QSqlQuery(f"""
+                    SELECT COLUMN_NAME
+                    FROM INFORMATION_SCHEMA.COLUMNS
+                    WHERE TABLE_NAME = '{index}'
+                """)
+                self.modelTitle.setQuery(self.queryTable)
+            except Exception as e:
+                print(str(e))
 
     def connectSignals(self):
         self.btnExlDoneConnection.clicked.connect(self.exlRes_emit_table)
