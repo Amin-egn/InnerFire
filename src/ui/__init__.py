@@ -29,6 +29,8 @@ class MainWindow(QMainWindow):
         self.generalLayout = QVBoxLayout()
         # set align top
         self.generalLayout.setAlignment(Qt.AlignTop)
+        # front widget
+        self.frontWidget = FrontWidget()
         # excel response
         self.excelResponse = ExcelResponse()
         # database response
@@ -36,23 +38,24 @@ class MainWindow(QMainWindow):
         # database table
         self.dbTable = DbTables()
         # database titles
-        self.dbTitles = DbTableTitles()
+        self.dbTableTitles = DbTableTitles()
         # attach
         self._mainWidget.setLayout(self.generalLayout)
-        self.actionButtons()
-        self.tableFrame()
-        self.castButton()
-        self.connectedSignals()
+        self.generalLayout.addWidget(self.frontWidget)
 
     def _styleSheet(self):
         self.setStyleSheet("""
             MainWindow {
                 background: #fcfcfc;
             }
-            #Table {
-                border: 2px dot-dash #3d9049;
-            }
         """)
+
+class FrontWidget(BaseWidget):
+    """Front Widget"""
+    def craftWidget(self):
+        self.actionButtons()
+        self.tableFrame()
+        self.castButton()
 
     def actionButtons(self):
         # button layout
@@ -67,6 +70,9 @@ class MainWindow(QMainWindow):
         self.buttonsLayout.addWidget(self.btnExcel)
         self.buttonsLayout.addWidget(self.btnDb)
         self.generalLayout.addLayout(self.buttonsLayout)
+
+    def listFrame(self):
+        pass
 
     def tableFrame(self):
         # frame widget
@@ -92,9 +98,12 @@ class MainWindow(QMainWindow):
         self.castLayout.addWidget(self.btnCast)
         self.generalLayout.addLayout(self.castLayout)
 
-    def connectedSignals(self):
-        self.btnExcel.clicked.connect(self.excelResponse.openExcel)
-        self.btnDb.clicked.connect(self.dbResponse.show)
+    def craftStyle(self):
+        self.setStyleSheet("""
+            #Table {
+                border: 2px dot-dash #3d9049;
+            }
+        """)
 
 
 class ExcelResponse(BaseDialog):
@@ -125,15 +134,16 @@ class ExcelResponse(BaseDialog):
             sheet = wb.active
             for cell in sheet.iter_cols(max_row=1, values_only=True):
                 index = cell[0]
-                strip_index = index.strip()
-                self.titleList.append(strip_index)
+                if index:
+                    strip_index = str(index).strip()
+                    self.titleList.append(strip_index)
 
         self.modelExcel = CheckList(self.titleList)
         self.listExcel.setModel(self.modelExcel)
         self.listExcel.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        if self.titleList:
-            self.show()
+        if path and self.titleList:
+            return True
 
     def craftStyles(self):
         self.setStyleSheet("""
