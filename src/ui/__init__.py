@@ -162,8 +162,8 @@ class DbResponse(BaseDialog):
         # form layout
         self.dataBaseLayout = QFormLayout()
         # inputs
-        self.serverInput = QLineEdit()
-        self.usernameInput = QLineEdit()
+        self.serverInput = QLineEdit(text='.\\')
+        self.usernameInput = QLineEdit(text='sa')
         self.passwordInput = QLineEdit(echoMode=QLineEdit.EchoMode.Password)
         self.dbnameInput = QLineEdit()
         # add widgets
