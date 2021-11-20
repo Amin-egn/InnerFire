@@ -18,4 +18,4 @@ def craftConnection(params):
         f'uid={userName};'
         f'pwd={passWord}'
     )
-    return conn.open()
+    return conn.open(), conn

@@ -11,7 +11,7 @@ class View(object):
     """View"""
     def __init__(self, ui):
         self.ui = ui
-        self.front = self.ui.frontWidget
+        self.assemble = self.ui.assembleWidget
         self.exlRes = self.ui.excelResponse
         self.dbRes = self.ui.dbResponse
         self.dbTbl = self.ui.dbTable
@@ -19,9 +19,9 @@ class View(object):
         # connections
         # - button in front
         # -- excel
-        self.btnExcelShow = self.front.btnExcel
+        self.btnExcelShow = self.assemble.btnExcel
         # -- database
-        self.btnDbShow = self.front.btnDb
+        self.btnDbShow = self.assemble.btnDb
         # - button in exlRes
         self.btnExlDoneConnection = self.exlRes.btnDone
         # - button in dbRes
@@ -47,7 +47,7 @@ class View(object):
             self.checkedItems.append(self.exlRes.modelExcel.items[i])
 
         self.modelDrgDrp = DrgDrpTable(['Excel Titles'], self.checkedItems)
-        self.front.tableWidget.setModel(self.modelDrgDrp)
+        self.assemble.tableWidget.setModel(self.modelDrgDrp)
 
     def dbRes_handler(self):
         """connect to database"""
@@ -59,14 +59,14 @@ class View(object):
                 if self.createConn:
                     self.dbRes.close()
                     self.dbTbl.show()
-                    self.modelConn = QSqlTableModel()
-                    self.dbTbl.listTables.setModel(self.modelConn)
-                    self.queryConn = QSqlQuery("""
+                    modelTablesName = QSqlTableModel()
+                    self.dbTbl.listTables.setModel(modelTablesName)
+                    queryTablesName = QSqlQuery("""
                         SELECT TABLE_NAME
                         FROM INFORMATION_SCHEMA.TABLES
                         WHERE TABLE_TYPE='BASE TABLE'
                     """)
-                    self.modelConn.setQuery(self.queryConn)
+                    modelTablesName.setQuery(queryTablesName)
 
             except Exception as e:
                 print(str(e))
@@ -81,15 +81,17 @@ class View(object):
             try:
                 self.dbTbl.close()
                 self.dbTtl.show()
-                self.modelTitle = QSqlTableModel()
-                self.dbTtl.listTitles.setModel(self.modelTitle)
-                self.queryTable = QSqlQuery("""
+                modelTitle = QSqlTableModel()
+                queryTableTitles = QSqlQuery()
+                self.dbTtl.listTitles.setModel(modelTitle)
+                queryTableTitles.prepare("""
                     SELECT COLUMN_NAME
                     FROM INFORMATION_SCHEMA.COLUMNS
                     WHERE TABLE_NAME = ?
                 """)
-                self.queryTable.addBindValue(index)
-                self.modelTitle.setQuery(self.queryTable)
+                queryTableTitles.addBindValue(index)
+                queryTableTitles.exec()
+                modelTitle.setQuery(queryTableTitles)
 
             except Exception as e:
                 print(str(e))
