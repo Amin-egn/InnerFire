@@ -25,7 +25,6 @@ class CheckList(ListModel):
     """List with CheckBox"""
     def __init__(self, items=None):
         super().__init__(items)
-        self.items = items
         self.checkList = list()
 
     def data(self, index, role):
