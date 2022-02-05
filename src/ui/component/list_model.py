@@ -2,6 +2,7 @@
 from PyQt5.Qt import QAbstractListModel, Qt
 
 
+# noinspection PyMethodOverriding
 class ListModel(QAbstractListModel):
     """List Model"""
     def __init__(self, items=None):
@@ -19,6 +20,7 @@ class ListModel(QAbstractListModel):
         return Qt.ItemIsSelectable | Qt.ItemIsEnabled
 
 
+# noinspection PyMethodOverriding,PyUnresolvedReferences
 class CheckList(ListModel):
     """List with CheckBox"""
     def __init__(self, items=None):
@@ -43,7 +45,6 @@ class CheckList(ListModel):
             self.checkList.append(index.row())
         else:
             self.checkList.remove(index.row())
-
         self.dataChanged.emit(index, index)
         return True
 

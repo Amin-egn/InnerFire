@@ -1,6 +1,9 @@
 # internal
-from src.ui.component import BaseDialog, FireButton
+from .base_dialog import BaseDialog
+from src.db import craftConnection
+from src.ui.component import FireButton
 # pyqt
+from PyQt5.QtSql import QSqlQuery, QSqlTableModel
 from PyQt5.QtWidgets import QLineEdit, QFormLayout, QHBoxLayout
 
 
@@ -31,15 +34,37 @@ class DbResponse(BaseDialog):
         self.generalLayout.addLayout(self.dataBaseLayout)
         self.generalLayout.addLayout(self.btnLayout)
 
-    def connList(self):
-        self.inputList = [
+    def _connList(self):
+        dataBaseInputList = [
             self.serverInput.text().strip(),
             self.usernameInput.text().strip(),
             self.passwordInput.text().strip(),
             self.dbnameInput.text().strip()
         ]
-        return self.inputList
+        if all(dataBaseInputList):
+            self._makeConnection(dataBaseInputList)
+        else:
+            print('Enter all params')
 
+    def _makeConnection(self, params):
+        try:
+            self.createConn = craftConnection(params)
+            if self.createConn:
+                self.dbRes.close()
+                self.dbTbl.show()
+                modelTablesName = QSqlTableModel()
+                self.dbTbl.listTables.setModel(modelTablesName)
+                queryTablesName = QSqlQuery("""
+                    SELECT TABLE_NAME
+                    FROM INFORMATION_SCHEMA.TABLES
+                    WHERE TABLE_TYPE='BASE TABLE'
+                """)
+                modelTablesName.setQuery(queryTablesName)
+
+        except Exception as e:
+            print(str(e))
+
+    # noinspection PyUnresolvedReferences
     def connectSignals(self):
         self.btnConnect.clicked.connect(self.connList)
 

@@ -19,7 +19,7 @@ class BaseDialog(QDialog):
         # layout
         self.generalLayout = QVBoxLayout()
         self.setLayout(self.generalLayout)
-        # window modality
+        # widgets modality
         self.setWindowModality(Qt.ApplicationModal)
 
     def craftDialog(self):
