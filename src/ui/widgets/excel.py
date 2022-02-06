@@ -9,9 +9,9 @@ from PyQt5.QtWidgets import QHBoxLayout
 class ExcelResponse(BaseDialog):
     """Excel Responsible"""
     def _craftDialog(self):
+        self.setWindowUnits('Excel Titles', './src/ui/resources/spell.png')
         # self modification
-        self.setWindowTitle('Excel Titles')
-        self.setFixedWidth(320)
+        self.setFixedWidth(380)
         # checklist model
         self.excelCheckListModel = CheckList()
         # list view
@@ -20,10 +20,14 @@ class ExcelResponse(BaseDialog):
         self.excelTableModel = SingleDimensionTableModel([])
         # table view
         self.excelTableView = TableView(self.excelTableModel)
-        # done button
+        # buttons
+        # - layout
         self.btnDoneLayout = QHBoxLayout()
         self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
+        # - doen
         self.btnDone = FireButton('Done')
+        # - exit
+        self.btnExit = FireButton('Exit')
         # attach
         # - button layout
         self.btnDoneLayout.addWidget(self.btnDone)
@@ -39,14 +43,18 @@ class ExcelResponse(BaseDialog):
             for i in sorted(self.excelCheckListModel.checkList):
                 checkedItems.append(self.excelCheckListModel.items[i])
 
-            self.excelTableModel.header = ['Excel Headers']
+            self.excelTableModel.header = ['Excel Titles']
+            self.ui.excelWidgetSignal = 1
 
         except Exception as e:
             print(str(e))
             self.excelTableModel.clearRecords()
+            self.ui.excelWidgetSignal = 0
 
         finally:
             self.excelTableModel.setRecords(checkedItems)
+            self.excelTableModel.layoutChanged.connect(self.ui.checkWidgetNumbers)
+
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):
