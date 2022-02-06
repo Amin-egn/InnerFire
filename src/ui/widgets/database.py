@@ -50,6 +50,9 @@ class DbResponse(BaseDialog):
             self.ui.databaseWidgetSignal = 0
             self.dbTitles.dbTitleTableView.deleteLater()
 
+        else:
+            self.ui.checkWidgetNumbers()
+
         self.close()
 
 
@@ -154,9 +157,9 @@ class DbTablesName(BaseWidget):
         self.proxyModel.setFilterRegExp(str(text))
 
     def _fetchTitlesFromTable(self):
-        selected_index = self.listTablesName.index(True)
+        self.selected_index = self.listTablesName.index(True)
         error, info = None, None
-        if selected_index is not None:
+        if self.selected_index is not None:
 
             modelTableTitles = QSqlTableModel()
             self.ui.dbTitles.proxyModel.setSourceModel(modelTableTitles)
@@ -166,7 +169,7 @@ class DbTablesName(BaseWidget):
                 FROM INFORMATION_SCHEMA.COLUMNS
                 WHERE TABLE_NAME = ?
             """)
-            queryTableTitles.addBindValue(selected_index)
+            queryTableTitles.addBindValue(self.selected_index)
 
             if queryTableTitles.exec():
                 modelTableTitles.setQuery(queryTableTitles)
@@ -214,7 +217,7 @@ class DbTableTitles(BaseWidget):
         # selected title list
         self.listTitleName = list()
         # table model
-        self.dbTitleTableModel = SingleDimensionTableModel(['Table Titles'])
+        self.dbTitleTableModel = SingleDimensionTableModel([])
         # table view
         self.dbTitleTableView = TableView(self.dbTitleTableModel)
         # buttons
@@ -248,9 +251,9 @@ class DbTableTitles(BaseWidget):
             if selected_row in self.listTitleName:
                 self.listTitleName.remove(selected_row)
 
+        self.dbTitleTableModel.header = [f'{self.ui.dbTables.selected_index}\'s Titles']
         self.dbTitleTableModel.setRecords(self.listTitleName)
         self.ui.ui.databaseWidgetSignal = 1
-        self.dbTitleTableModel.layoutChanged.connect(self.ui.ui.checkWidgetNumbers)
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):

@@ -53,8 +53,12 @@ class ExcelResponse(BaseDialog):
 
         finally:
             self.excelTableModel.setRecords(checkedItems)
-            self.excelTableModel.layoutChanged.connect(self.ui.checkWidgetNumbers)
 
+    def closeEvent(self, event):
+        if not self.excelTableModel.isEmpty():
+            self.ui.checkWidgetNumbers()
+
+        self.close()
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):

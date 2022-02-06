@@ -2,6 +2,7 @@
 from src.ui import widgets
 # pyqt
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QStackedLayout, QWidget
 
 
@@ -18,6 +19,7 @@ class MainWindow(QMainWindow):
     def _bootstrap(self):
         self.setWindowTitle('Inner Fire')
         self.setMinimumSize(600, 480)
+        self.setWindowIcon(QIcon('./src/ui/resources/innerfire.png'))
         # central widget
         self._mainWidget = QWidget(self)
         self.setCentralWidget(self._mainWidget)
