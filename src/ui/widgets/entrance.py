@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import QHBoxLayout, QLabel, QFileDialog, QFrame
 class Entrance(BaseWidget):
     """Entrance"""
     def _craftWidget(self):
+        self.excelWidgetSignal = 0
+        self.databaseWidgetSignal = 0
         self._actionButtons()
         # self._tableWidget()
         self._modelsFrame()
@@ -25,9 +27,9 @@ class Entrance(BaseWidget):
         self.buttonsLayout.setContentsMargins(0, 10, 0, 0)
         self.buttonsLayout.setAlignment(Qt.AlignHCenter)
         # excel button
-        self.btnExcel = FireButton('Read Excel', icon='./src/ui/resources/spreadsheet.png')
+        self.btnExcel = FireButton('Read Excel', icon='./src/ui/resources/spell.png')
         # data base button
-        self.btnDb = FireButton('Query Data-Base', icon='./src/ui/resources/database.png')
+        self.btnDb = FireButton('Query Data-Base', icon='./src/ui/resources/money-bag.png')
         # attach
         self.buttonsLayout.addWidget(self.btnExcel)
         self.buttonsLayout.addWidget(self.btnDb)
@@ -65,11 +67,11 @@ class Entrance(BaseWidget):
         # cast label
         self.lblCast = QLabel('You should select excel and sql table that you want to cast =)')
         # cast button
-        self.btnCast = FireButton('Next Stage!')
-        self.btnCast.setDisabled(True)
+        self.btnNextStage = FireButton('Next Stage!')
+        self.btnNextStage.setDisabled(True)
         # attach
         self.castLayout.addWidget(self.lblCast)
-        self.castLayout.addWidget(self.btnCast)
+        self.castLayout.addWidget(self.btnNextStage)
         # - general
         self.generalLayout.addLayout(self.castLayout)
 
@@ -108,8 +110,8 @@ class Entrance(BaseWidget):
         self.dbResponse.show()
 
     def checkWidgetNumbers(self):
-        if self.modelsLayout.count() > 1:
-            self.btnCast.setEnabled(True)
+        if self.excelWidgetSignal and self.databaseWidgetSignal:
+            self.btnNextStage.setEnabled(True)
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):
@@ -122,6 +124,6 @@ class Entrance(BaseWidget):
                 background: #fcfcfc;
             }
             #Table {
-                border: 2px dot-dash #3d9049;
+                border: 2px dot-dash #33892a;
             }
         """)
