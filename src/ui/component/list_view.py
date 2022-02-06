@@ -11,3 +11,10 @@ class ListView(QListView):
 
     def _craftList(self):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+    def index(self, val=False):
+        indexes = self.selectedIndexes()
+        if val:
+            return indexes[0].data() if indexes else None
+
+        return indexes[0].row() if indexes else None

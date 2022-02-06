@@ -20,27 +20,29 @@ class BaseButton(QPushButton):
         self._bootstrap()
 
     def _bootstrap(self):
-        self.craftButton()
-        self.craftStyle()
+        self._craftButton()
+        self._craftStyle()
 
-    def craftButton(self):
+    def _craftButton(self):
         self.setFixedSize(*self.size)
         self.setCursor(QCursor(Qt.PointingHandCursor))
         if self.font:
             self.setFont(QFont(self.font, self.fontSize))
+
         if self.icon:
             self.setIcon(QIcon(self.icon))
             self.setIconSize(QSize(self.iconSize, self.iconSize))
 
-    def craftStyle(self):
+    def _craftStyle(self):
         pass
 
 
 class FireButton(BaseButton):
+    """Fire Button"""
     FONT = 'Lucida console'
     SIZE = (200, 40)
 
-    def craftStyle(self):
+    def _craftStyle(self):
         self.setStyleSheet("""
             FireButton {
                 border: none;
@@ -53,5 +55,26 @@ class FireButton(BaseButton):
             }
             FireButton:pressed {
                 border-color: #3d9049;
+            }
+        """)
+
+class RemoveButton(BaseButton):
+    """Remove Button"""
+    FONT = 'Lucida console'
+    SIZE = (200, 40)
+
+    def _craftStyle(self):
+        self.setStyleSheet("""
+            RemoveButton {
+                border: none;
+                color: #777777;
+            }
+            RemoveButton:hover {
+                border: 1px solid #b06679;
+                border-radius: 20px;
+                color: #111111;
+            }
+            RemoveButton:pressed {
+                border-color: #9e5c6d;
             }
         """)
