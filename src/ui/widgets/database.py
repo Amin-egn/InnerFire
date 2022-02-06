@@ -2,7 +2,9 @@
 from .base import BaseWidget
 from .base_dialog import BaseDialog
 from src.db import craftConnection
-from src.ui.component import FireButton, ReceiveInput, TableView, ListView, RemoveButton, SingleDimensionTableModel
+from src.ui.component import (FireButton, ReceiveInput, TableView, ListView,
+                              RemoveButton, SingleDimensionTableModel, AddButton,
+                              WarningMessage, InfoMessage)
 from src import settings
 # pyqt
 from PyQt5.QtCore import Qt, QPropertyAnimation
@@ -20,8 +22,8 @@ class DbResponse(BaseDialog):
         self.setLayout(self.generalLayout)
 
     def _craftDialog(self):
-        self.setWindowTitle('Database')
-        self.setFixedWidth(420)
+        self.setWindowUnits('Database', './src/ui/resources/money-bag.png')
+        self.setFixedWidth(380)
         self._widgetInstances()
         self.menuHandler(0)
 
@@ -45,6 +47,7 @@ class DbResponse(BaseDialog):
 
     def closeEvent(self, event):
         if self.dbTitles.dbTitleTableModel.isEmpty():
+            self.ui.databaseWidgetSignal = 0
             self.dbTitles.dbTitleTableView.deleteLater()
 
         self.close()
@@ -85,32 +88,36 @@ class DbConnection(BaseWidget):
             self._makeConnection(dataBaseInputList)
 
         else:
-            print('Enter all params')
+            msg_params = WarningMessage('Enter all require parameters', self)
+            msg_params.exec()
 
     def _makeConnection(self, params):
-        try:
-            self.createConn = craftConnection(params)
-            if self.createConn:
-                modelTablesName = QSqlTableModel()
-                self.ui.dbTables.proxyModel.setSourceModel(modelTablesName)
-                queryTablesName = QSqlQuery()
-                queryTablesName.prepare("""
-                    SELECT TABLE_NAME
-                    FROM INFORMATION_SCHEMA.TABLES
-                    WHERE TABLE_TYPE='BASE TABLE'
-                """)
-                queryTablesName.exec_()
+        error = None
+        self.createConn = craftConnection(params)
+        if self.createConn:
+            modelTablesName = QSqlTableModel()
+            self.ui.dbTables.proxyModel.setSourceModel(modelTablesName)
+            queryTablesName = QSqlQuery()
+            queryTablesName.prepare("""
+                SELECT TABLE_NAME
+                FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_TYPE='BASE TABLE'
+            """)
+            if queryTablesName.exec():
                 modelTablesName.setQuery(queryTablesName)
+                settings.s('servername', self.serverInput.text().strip())
+                settings.s('username', self.usernameInput.text().strip())
+                settings.s('databasename', self.dbnameInput.text().strip())
+                settings.save()
+                self.ui.menuHandler(1)
 
-        except Exception as e:
-            print(str(e))
+            else:
+                error = 'Cannot connect to database please check parameters correctness'
+                print(queryTablesName.lastError())
 
-        else:
-            settings.s('servername', self.serverInput.text().strip())
-            settings.s('username', self.usernameInput.text().strip())
-            settings.s('databasename', self.dbnameInput.text().strip())
-            settings.save()
-            self.ui.menuHandler(1)
+        if error:
+            msg_err = WarningMessage(error, self)
+            msg_err.exec()
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):
@@ -124,7 +131,6 @@ class DbConnection(BaseWidget):
         """)
 
 
-
 class DbTablesName(BaseWidget):
     """Database Tables"""
     def _craftWidget(self):
@@ -136,9 +142,9 @@ class DbTablesName(BaseWidget):
         # done button
         self.btnDoneLayout = QHBoxLayout()
         self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
-        self.btnDone = FireButton('Done')
+        self.btnSelect = FireButton('Select')
         # attach
-        self.btnDoneLayout.addWidget(self.btnDone)
+        self.btnDoneLayout.addWidget(self.btnSelect)
         # - general
         self.generalLayout.addWidget(self.searchInput)
         self.generalLayout.addWidget(self.listTablesName)
@@ -149,32 +155,44 @@ class DbTablesName(BaseWidget):
 
     def _fetchTitlesFromTable(self):
         selected_index = self.listTablesName.index(True)
+        error, info = None, None
         if selected_index is not None:
-            try:
-                modelTableTitles = QSqlTableModel()
-                self.ui.dbTitles.proxyModel.setSourceModel(modelTableTitles)
-                queryTableTitles = QSqlQuery()
-                queryTableTitles.prepare("""
-                    SELECT COLUMN_NAME
-                    FROM INFORMATION_SCHEMA.COLUMNS
-                    WHERE TABLE_NAME = ?
-                """)
-                queryTableTitles.addBindValue(selected_index)
-                queryTableTitles.exec()
-                modelTableTitles.setQuery(queryTableTitles)
 
-            except Exception as e:
-                print(str(e))
+            modelTableTitles = QSqlTableModel()
+            self.ui.dbTitles.proxyModel.setSourceModel(modelTableTitles)
+            queryTableTitles = QSqlQuery()
+            queryTableTitles.prepare("""
+                SELECT COLUMN_NAME
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = ?
+            """)
+            queryTableTitles.addBindValue(selected_index)
+
+            if queryTableTitles.exec():
+                modelTableTitles.setQuery(queryTableTitles)
+                self.ui.menuHandler(2)
 
             else:
-                self.ui.menuHandler(2)
+                error = 'Something went wrong! Please check logs'
+                print(queryTableTitles.lastError())
+
+        else:
+            info = 'Please choose a table'
+
+        if error:
+            msg_err = WarningMessage(error, self)
+            msg_err.exec()
+
+        if info:
+            msg_info = InfoMessage(info, self)
+            msg_info.exec()
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):
         # search box
         self.searchInput.textChanged.connect(self._searchHandler)
         # done button
-        self.btnDone.clicked.connect(self._fetchTitlesFromTable)
+        self.btnSelect.clicked.connect(self._fetchTitlesFromTable)
 
     def _craftStyles(self):
         self.setStyleSheet("""
@@ -199,24 +217,21 @@ class DbTableTitles(BaseWidget):
         self.dbTitleTableModel = SingleDimensionTableModel(['Table Titles'])
         # table view
         self.dbTitleTableView = TableView(self.dbTitleTableModel)
-        # done button
-        self.btnDoneLayout = QHBoxLayout()
-        self.btnDoneLayout.setAlignment(Qt.AlignHCenter)
-        self.btnDone = FireButton('Add')
-        # remove butoon
-        self.btnRemoveLayout = QHBoxLayout()
-        self.btnRemoveLayout.setAlignment(Qt.AlignHCenter)
+        # buttons
+        self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.setAlignment(Qt.AlignHCenter)
+        # - add
+        self.btnAdd = AddButton('Add')
+        # - remove
         self.btnRemove = RemoveButton('Remove')
         # attach
         # - button layout
-        self.btnDoneLayout.addWidget(self.btnDone)
-        # - remove layout
-        self.btnRemoveLayout.addWidget(self.btnRemove)
+        self.buttonLayout.addWidget(self.btnAdd)
+        self.buttonLayout.addWidget(self.btnRemove)
         # - general
         self.generalLayout.addWidget(self.searchInput)
         self.generalLayout.addWidget(self.listTablesTitles)
-        self.generalLayout.addLayout(self.btnDoneLayout)
-        self.generalLayout.addLayout(self.btnRemoveLayout)
+        self.generalLayout.addLayout(self.buttonLayout)
         # - entrance
         self.ui.ui.modelsLayout.addWidget(self.dbTitleTableView)
 
@@ -234,6 +249,7 @@ class DbTableTitles(BaseWidget):
                 self.listTitleName.remove(selected_row)
 
         self.dbTitleTableModel.setRecords(self.listTitleName)
+        self.ui.ui.databaseWidgetSignal = 1
         self.dbTitleTableModel.layoutChanged.connect(self.ui.ui.checkWidgetNumbers)
 
     # noinspection PyUnresolvedReferences
@@ -241,7 +257,7 @@ class DbTableTitles(BaseWidget):
         # search box
         self.searchInput.textChanged.connect(self._searchHandler)
         # button done
-        self.btnDone.clicked.connect(lambda: self._innerToMainTable('add'))
+        self.btnAdd.clicked.connect(lambda: self._innerToMainTable('add'))
         # button remove
         self.btnRemove.clicked.connect(lambda: self._innerToMainTable('remove'))
 
