@@ -49,29 +49,54 @@ class FireButton(BaseButton):
                 color: #777777;
             }
             FireButton:hover {
-                border: 1px solid #66b071;
-                border-radius: 20px;
+                border: 1px solid #3da131;
+                border-radius: 18px;
                 color: #111111;
             }
             FireButton:pressed {
-                border-color: #3d9049;
+                border-color: #33892a;
             }
         """)
+
+
+class AddButton(BaseButton):
+    """Remove Button"""
+    FONT = 'Lucida console'
+    SIZE = (100, 40)
+
+    def _craftStyle(self):
+        self.setStyleSheet("""
+            AddButton {
+                border: 1px solid #3da131;
+                border-radius: 18px;
+                color: #777777;
+            }
+            AddButton:hover {
+                border: 2px solid #33892a;
+                border-radius: 18px;
+                color: #111111;
+            }
+            AddButton:pressed {
+                border-color: #9e5c6d;
+            }
+        """)
+
 
 class RemoveButton(BaseButton):
     """Remove Button"""
     FONT = 'Lucida console'
-    SIZE = (200, 40)
+    SIZE = (100, 40)
 
     def _craftStyle(self):
         self.setStyleSheet("""
             RemoveButton {
-                border: none;
+                border: 1px solid #e64658;
+                border-radius: 18px;
                 color: #777777;
             }
             RemoveButton:hover {
-                border: 1px solid #b06679;
-                border-radius: 20px;
+                border: 2px solid #e01f35;
+                border-radius: 18px;
                 color: #111111;
             }
             RemoveButton:pressed {

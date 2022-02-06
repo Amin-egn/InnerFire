@@ -11,6 +11,7 @@ class TableView(QTableView):
 
     def _craftTable(self):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
         self.horizontalHeader().setStretchLastSection(True)
 
     def index(self, val=False):

@@ -1,7 +1,7 @@
 # internal
 from .base_button import AddButton, RemoveButton
 # pyqt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QMessageBox
 
 
@@ -10,7 +10,7 @@ class BaseMessage(QMessageBox):
     TITLE = 'Base Message'
     ICON = QMessageBox.NoIcon
     BUTTONS = QMessageBox.Ok
-    FLAGICON = None
+    FLAGICON = './src/ui/resources/book.png'
 
     def __init__(self, text, parent=None):
         super().__init__(parent)
@@ -24,18 +24,20 @@ class BaseMessage(QMessageBox):
     def _craftMessage(self):
         self.setWindowTitle(self.TITLE)
         self.setText(self.text)
-        self.setIcon(self.ICON)
-        if self.FLAGICON:
-            self.setWindowIcon(QIcon(self.FLAGICON))
+        pix = QPixmap(self.ICON)
+        pix.scaledToWidth(64)
+        pix.scaledToHeight(64)
+        self.setIconPixmap(pix)
+        self.setWindowIcon(QIcon(self.FLAGICON))
 
         if self.BUTTONS & QMessageBox.Ok:
-            self.addButton(AddButton('باشه'), QMessageBox.AcceptRole)
+            self.addButton(AddButton('Okayyy'), QMessageBox.AcceptRole)
 
         if self.BUTTONS & QMessageBox.Yes:
-            self.addButton(AddButton('بله'), QMessageBox.YesRole)
+            self.addButton(AddButton('Yesss'), QMessageBox.YesRole)
 
         if self.BUTTONS & QMessageBox.No:
-            self.addButton(RemoveButton('خیر'), QMessageBox.RejectRole)
+            self.addButton(RemoveButton('Nooo'), QMessageBox.RejectRole)
 
     def _craftStyle(self):
         self.setStyleSheet("""
@@ -48,22 +50,19 @@ class BaseMessage(QMessageBox):
 class WarningMessage(BaseMessage):
     """Warning Message"""
     TITLE = 'InnerFire-Error!!!'
-    ICON = QMessageBox.Warning
+    ICON = './src/ui/resources/reaper.png'
     BUTTONS = QMessageBox.Ok
-    FLAGICON = './src/ui/resources/reaper.png'
 
 
 class QuestionMessage(BaseMessage):
     """Question Message"""
     TITLE = 'InnerFire-Question?'
-    ICON = QMessageBox.Question
+    ICON = './src/ui/resources/orc.png'
     BUTTONS = QMessageBox.Yes | QMessageBox.No
-    FLAGICON = './src/ui/resources/orc.png'
 
 
 class InfoMessage(BaseMessage):
     """Information Message"""
     TITLE = 'InnerFire-Info!'
-    ICON = QMessageBox.Information
+    ICON = './src/ui/resources/people.png'
     BUTTONS = QMessageBox.Ok
-    FLAGICON = './src/ui/resources/people.png'
