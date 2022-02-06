@@ -1,5 +1,6 @@
 # pyqt
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QVBoxLayout
 
 
@@ -31,3 +32,7 @@ class BaseDialog(QDialog):
 
     def _connectSignals(self):
         pass
+
+    def setWindowUnits(self, title, icon):
+        self.setWindowTitle(title)
+        self.setWindowIcon(QIcon(icon))
