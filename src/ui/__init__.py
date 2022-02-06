@@ -1,9 +1,8 @@
 # internal
-from src.ui.window import (DbResponse, ExcelResponse, AssembleWidget,
-                           DbTablesName, DbTableTitles)
+from src.ui import widgets
 # pyqt
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QMainWindow, QStackedLayout, QWidget
 
 
 class MainWindow(QMainWindow):
@@ -11,34 +10,39 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         # bootstrap
         self._bootstrap()
+        # connect signal
+        self._connectSignals()
         # stylesheet
-        self._styleSheet()
+        self._craftStyle()
 
     def _bootstrap(self):
         self.setWindowTitle('Inner Fire')
-        self.setMinimumSize(640, 480)
+        self.setMinimumSize(600, 480)
         # central widget
         self._mainWidget = QWidget(self)
         self.setCentralWidget(self._mainWidget)
         # general layout
-        self.generalLayout = QVBoxLayout()
-        # set align top
+        self.generalLayout = QStackedLayout()
         self.generalLayout.setAlignment(Qt.AlignTop)
-        # front widget
-        self.assembleWidget = AssembleWidget()
-        # excel response
-        self.excelResponse = ExcelResponse()
-        # database response
-        self.dbResponse = DbResponse()
-        # database table
-        self.dbTable = DbTablesName()
-        # database titles
-        self.dbTableTitles = DbTableTitles()
-        # attach
         self._mainWidget.setLayout(self.generalLayout)
-        self.generalLayout.addWidget(self.assembleWidget)
+        self._widgetsInstance()
+        self.widgetsHandler()
 
-    def _styleSheet(self):
+    def _widgetsInstance(self):
+        self._widgetList = [
+            widgets.Entrance(self)
+        ]
+
+        for widget in self._widgetList:
+            self.generalLayout.addWidget(widget)
+
+    def widgetsHandler(self, index=0):
+        self.generalLayout.setCurrentIndex(index)
+
+    def _connectSignals(self):
+        pass
+
+    def _craftStyle(self):
         self.setStyleSheet("""
             MainWindow {
                 background: #fcfcfc;

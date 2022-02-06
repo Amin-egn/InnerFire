@@ -5,28 +5,29 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout
 
 class BaseDialog(QDialog):
     """Base Dialog"""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, ui, *args, **kwargs):
+        super().__init__(ui, *args, **kwargs)
+        self.ui = ui
         self._bootstrap()
 
     def _bootstrap(self):
-        self.craftLayout()
-        self.craftDialog()
-        self.craftStyles()
-        self.connectSignals()
+        self._craftLayout()
+        self._craftDialog()
+        self._craftStyles()
+        self._connectSignals()
 
-    def craftLayout(self):
+    def _craftLayout(self):
         # layout
         self.generalLayout = QVBoxLayout()
         self.setLayout(self.generalLayout)
         # widgets modality
         self.setWindowModality(Qt.ApplicationModal)
 
-    def craftDialog(self):
+    def _craftDialog(self):
         pass
 
-    def craftStyles(self):
+    def _craftStyles(self):
         pass
 
-    def connectSignals(self):
+    def _connectSignals(self):
         pass
