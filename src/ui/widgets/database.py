@@ -52,6 +52,7 @@ class DbResponse(BaseDialog):
 
         else:
             self.ui.checkWidgetNumbers()
+            self.ui.listTableDataCollector.extend(self.dbTitles.dbTitleTableModel.records)
 
         self.close()
 

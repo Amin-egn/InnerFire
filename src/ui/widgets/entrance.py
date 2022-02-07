@@ -2,7 +2,7 @@
 from .base import BaseWidget
 from .excel import ExcelResponse
 from .database import DbResponse
-from src.ui.component import FireButton, TableView, SingleDimensionTableModel
+from src.ui.component import FireButton
 # external
 from openpyxl import load_workbook
 # pyqt
@@ -18,8 +18,12 @@ class Entrance(BaseWidget):
         self._actionButtons()
         # self._tableWidget()
         self._modelsFrame()
-        self._castButton()
+        self._nextStage()
         self.excelResponse = ExcelResponse(self)
+        # Excel collector list
+        self.listExcelDataCollector = list()
+        # table collector list
+        self.listTableDataCollector = list()
 
     def _actionButtons(self):
         # button layout
@@ -36,19 +40,6 @@ class Entrance(BaseWidget):
         # - general
         self.generalLayout.addLayout(self.buttonsLayout)
 
-    def _tableWidget(self):
-        # table model headers
-        self.listTableModelHeaders = []
-        # table model
-        self.tableModel = SingleDimensionTableModel(self.listTableModelHeaders)
-        # table view
-        self.tableView = TableView(self.tableModel)
-        self.tableView.setObjectName('Table')
-        self.tableView.setMinimumSize(580, 360)
-        # attach
-        # - general
-        self.generalLayout.addWidget(self.tableView)
-
     def _modelsFrame(self):
         # frame
         self.modelsFrame = QFrame(self)
@@ -60,20 +51,20 @@ class Entrance(BaseWidget):
         # attach
         self.generalLayout.addWidget(self.modelsFrame)
 
-    def _castButton(self):
+    def _nextStage(self):
         # cast layout
-        self.castLayout = QHBoxLayout()
-        self.castLayout.setContentsMargins(0, 10, 0, 5)
+        self.nextStageLayout = QHBoxLayout()
+        self.nextStageLayout.setContentsMargins(0, 10, 0, 5)
         # cast label
-        self.lblCast = QLabel('You should select excel and sql table that you want to cast =)')
+        self.lblNextStage = QLabel('You should select excel and sql table that you want to cast =)')
         # cast button
         self.btnNextStage = FireButton('Next Stage!')
         self.btnNextStage.setDisabled(True)
         # attach
-        self.castLayout.addWidget(self.lblCast)
-        self.castLayout.addWidget(self.btnNextStage)
+        self.nextStageLayout.addWidget(self.lblNextStage)
+        self.nextStageLayout.addWidget(self.btnNextStage)
         # - general
-        self.generalLayout.addLayout(self.castLayout)
+        self.generalLayout.addLayout(self.nextStageLayout)
 
     def _openExcel(self):
         # empty list

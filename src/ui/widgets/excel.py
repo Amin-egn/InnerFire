@@ -50,9 +50,11 @@ class ExcelResponse(BaseDialog):
             print(str(e))
             self.excelTableModel.clearRecords()
             self.ui.excelWidgetSignal = 0
+            self.ui.listExcelDataCollector.clear()
 
         finally:
             self.excelTableModel.setRecords(checkedItems)
+            self.ui.listExcelDataCollector.extend(self.excelTableModel.records)
 
     def closeEvent(self, event):
         if not self.excelTableModel.isEmpty():
