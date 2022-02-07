@@ -31,18 +31,21 @@ class MainWindow(QMainWindow):
         self.widgetsHandler()
 
     def _widgetsInstance(self):
-        self._widgetList = [
-            widgets.Entrance(self)
-        ]
+        # Entrance
+        self.entrance = widgets.Entrance(self)
+        # InnerImport
+        self.innerImport = widgets.InnerImport(self)
+        # attach
+        self.generalLayout.addWidget(self.entrance)
+        self.generalLayout.addWidget(self.innerImport)
 
-        for widget in self._widgetList:
-            self.generalLayout.addWidget(widget)
-
-    def widgetsHandler(self, index=0):
+    def widgetsHandler(self, index=1):
         self.generalLayout.setCurrentIndex(index)
+        # self.innerImport.innerExcelTitleModel.setRecords(self.entrance.listExcelDataCollector)
+        # self.innerImport.innerDbTitleModel.setRecords(self.entrance.listTableDataCollector)
 
     def _connectSignals(self):
-        pass
+        self.entrance.btnNextStage.clicked.connect(lambda: self.widgetsHandler(1))
 
     def _craftStyle(self):
         self.setStyleSheet("""
