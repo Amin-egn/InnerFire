@@ -1,5 +1,5 @@
 from .list_view import ListView
-from .table_view import TableView
+from .table_view import TableView, DragDropTableView
 from .base_input import ReceiveInput
 from .draggable_label import DragLabel
 from .list_model import ListModel, CheckList

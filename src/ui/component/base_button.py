@@ -54,7 +54,7 @@ class FireButton(BaseButton):
                 color: #111111;
             }
             FireButton:pressed {
-                border-color: #33892a;
+                border: 2px solid #33892a;
             }
         """)
 
@@ -72,12 +72,12 @@ class AddButton(BaseButton):
                 color: #777777;
             }
             AddButton:hover {
-                border: 2px solid #33892a;
+                border-color: #33892a;
                 border-radius: 18px;
                 color: #111111;
             }
             AddButton:pressed {
-                border-color: #9e5c6d;
+                border: 2px solid #2c7524;
             }
         """)
 
@@ -95,11 +95,11 @@ class RemoveButton(BaseButton):
                 color: #777777;
             }
             RemoveButton:hover {
-                border: 2px solid #e01f35;
+                border-color: #e01f35;
                 border-radius: 18px;
                 color: #111111;
             }
             RemoveButton:pressed {
-                border-color: #9e5c6d;
+                border: 2px solid #9e5c6d;
             }
         """)
