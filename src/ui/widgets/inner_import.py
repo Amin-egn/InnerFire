@@ -1,10 +1,12 @@
 # internal
 from .base import BaseWidget
-from src.ui.component import SingleDimensionTableModel, DragDropTableView
+from src.ui.component import DragList, ListView, TableWidget, FireButton, ReceiveInput
 # pyqt
-from PyQt5.QtWidgets import QLabel, QFrame, QHBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QLabel, QFrame, QHBoxLayout, QVBoxLayout, QComboBox
 
 
+# noinspection PyUnresolvedReferences
 class InnerImport(BaseWidget):
     """Inner Import"""
     def _craftWidget(self):
@@ -24,22 +26,76 @@ class InnerImport(BaseWidget):
         self.importerLayout = QHBoxLayout()
         self.importerFrame.setLayout(self.importerLayout)
         # Excel
-        # - model
-        self.innerExcelTitleModel = SingleDimensionTableModel(['Excel\'s titels'])
-        self.innerExcelTitleModel.setRecords(['Firstname', 'Lastname', 'Tell'])
-        # - view
-        self.innerExcelTitleView = DragDropTableView(self.innerExcelTitleModel)
-        self.innerExcelTitleView.setFixedWidth(170)
+        self._innerExcel()
         # Database
-        # - model
-        self.innerDbTitleModel = SingleDimensionTableModel(['Table\'s titles'])
-        self.innerDbTitleModel.setRecords(['Code', 'Address', 'Name', 'Fname', 'Lname', 'Balance', 'Tell'])
-        # - view
-        self.innerDbTitleView = DragDropTableView(self.innerDbTitleModel)
-        self.innerDbTitleView.setMinimumWidth(400)
+        self._innerDatabase()
         # attach
-        # - importer
-        self.importerLayout.addWidget(self.innerExcelTitleView)
-        self.importerLayout.addWidget(self.innerDbTitleView)
-        # - general
         self.generalLayout.addWidget(self.importerFrame)
+
+    def _innerExcel(self):
+        # excel layout
+        self.innerExcelLayout = QVBoxLayout()
+        self.innerExcelLayout.setAlignment(Qt.AlignHCenter)
+        # label
+        self.lblExcel = QLabel('Excel Titles')
+        # model
+        self.innerExcelTitleModel = DragList()
+        self.innerExcelTitleModel.setItems(['Name', 'Lastname', 'Tell', 'Code'])
+        # view
+        self.innerExcelTitleView = ListView(self.innerExcelTitleModel)
+        self.innerExcelTitleView.setAlternatingRowColors(True)
+        self.innerExcelTitleView.setDragEnabled(True)
+        self.innerExcelTitleView.setMinimumWidth(175)
+        # input combobox
+        self.comboBox = QComboBox()
+        self.comboBox.addItem('String')
+        self.comboBox.addItem('Integer')
+        # drag input
+        self.dragInput = ReceiveInput(placeHolder='Please insert strings', drag=True)
+        # self.dragInput.setDragEnabled(True)
+        # attach
+        # - main
+        self.innerExcelLayout.addWidget(self.lblExcel)
+        self.innerExcelLayout.addWidget(self.innerExcelTitleView)
+        self.innerExcelLayout.addWidget(self.comboBox)
+        self.innerExcelLayout.addWidget(self.dragInput)
+        # - importer
+        self.importerLayout.addLayout(self.innerExcelLayout)
+
+    def _innerDatabase(self):
+        # database layout
+        self.innerDbLayout = QVBoxLayout()
+        self.innerDbLayout.setAlignment(Qt.AlignHCenter)
+        # widget
+        self.innerDbTitleWidget = TableWidget(['Title', 'Combobox', 'Droppables'])
+        self.innerDbTitleWidget.setRowRecords(['Names', 'LastNames', 'Codes', 'Fullnames'])
+        self.innerDbTitleWidget.setMinimumWidth(400)
+        # button
+        self.btnCast = FireButton('Cast')
+        # attach
+        # - main
+        self.innerDbLayout.addWidget(self.innerDbTitleWidget)
+        self.innerDbLayout.addWidget(self.btnCast)
+        # - importer
+        self.importerLayout.addLayout(self.innerDbLayout)
+
+    def _dragInputHandler(self, index):
+        self.dragInput.clear()
+        if index == 0 :
+            text = 'Please insert strings'
+            trufal = False
+        else:
+            text = 'Please insert integers'
+            trufal = True
+
+        self.dragInput.setPlaceholderText(text)
+        self.dragInput.intValid(trufal)
+
+    def _importHandler(self):
+        self.innerDbTitleWidget.getListRecords()
+
+    def _connectSignals(self):
+        # combobox
+        self.comboBox.currentIndexChanged.connect(self._dragInputHandler)
+        # cast button
+        self.btnCast.clicked.connect(self._importHandler)
