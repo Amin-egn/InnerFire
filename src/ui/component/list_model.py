@@ -25,6 +25,18 @@ class ListModel(QAbstractListModel):
         self.endResetModel()
         self.layoutChanged.emit()
 
+    def addItem(self, item):
+        self.beginResetModel()
+        self.items.append(item)
+        self.endResetModel()
+        self.layoutChanged.emit()
+
+    def removeItem(self, item):
+        self.beginResetModel()
+        self.items.remove(item)
+        self.endResetModel()
+        self.layoutChanged.emit()
+
 
 # noinspection PyMethodOverriding,PyUnresolvedReferences
 class CheckList(ListModel):

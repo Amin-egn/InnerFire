@@ -1,5 +1,3 @@
-# standard
-from functools import partial
 # internal
 from .list_widget import DropList
 from .combobox import ComboBox
@@ -31,9 +29,25 @@ class TableWidget(QTableWidget):
             self.setCellWidget(i, 2, DropList())
 
     def getListRecords(self, col=2):
+        record_dict = dict()
         for i in range(self.recLen):
-            self.cellWidget(i, col).getMembers()
+            record_dict[self.item(i, 0).text()] = self.cellWidget(i, col).getMembers()
 
-    def changeIndex(self, index):
+        print(record_dict)
+
+    def comboIndexChanged(self, index):
+        selected_row_list = self.cellWidget(self.currentRow(), 2)
+        selected_row_list.clear()
         if index == 1 or index == 2:
-            pass
+            trufal = True
+            if index == 1:
+                item = '_Null'
+            else:
+                item = '_AutoIncrement'
+
+            selected_row_list.addItem(item)
+
+        else:
+            trufal = False
+
+        selected_row_list.setDisabled(trufal)

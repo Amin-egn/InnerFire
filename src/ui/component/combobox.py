@@ -9,7 +9,4 @@ class ComboBox(QComboBox):
         super().__init__(parent)
         self.ui = parent
         self.addItems(items)
-        self.currentIndexChanged.connect(self.ui.changeIndex)
-
-    # def changeIndex(self, func):
-    #     self.currentIndexChanged.connect(func)
+        self.currentIndexChanged.connect(self.ui.comboIndexChanged)

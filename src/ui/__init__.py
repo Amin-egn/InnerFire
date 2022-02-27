@@ -1,6 +1,5 @@
 # internal
 from src.ui import widgets
-from src.ui.component import DropList
 # pyqt
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
@@ -34,16 +33,20 @@ class MainWindow(QMainWindow):
     def _widgetsInstance(self):
         # Entrance
         self.entrance = widgets.Entrance(self)
+        # WarpWoof
+        self.warpWoof = widgets.WarpWoof(self)
         # InnerImport
         self.innerImport = widgets.InnerImport(self)
         # attach
         self.generalLayout.addWidget(self.entrance)
+        self.generalLayout.addWidget(self.warpWoof)
         self.generalLayout.addWidget(self.innerImport)
 
-    def widgetsHandler(self, index=1):
+    def widgetsHandler(self, index=2):
         self.generalLayout.setCurrentIndex(index)
-        # self.innerImport.innerExcelTitleModel.setItems(self.entrance.listExcelDataCollector)
-        # self.innerImport.innerDbTitleWidget.rowRecords(0, 1, self.entrance.listTableDataCollector, DropList)
+        if index == 1:
+            self.warpWoof.innerExcelTitleModel.setItems(self.entrance.listExcelDataCollector)
+            self.warpWoof.innerDbTitleWidget.setRowRecords(self.entrance.listTableDataCollector)
 
     def _connectSignals(self):
         self.entrance.btnNextStage.clicked.connect(lambda: self.widgetsHandler(1))
