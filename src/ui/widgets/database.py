@@ -2,6 +2,7 @@
 from .base import BaseWidget
 from .base_dialog import BaseDialog
 from src.db import craftConnection
+from src import sql_queries
 from src.ui.component import (FireButton, ReceiveInput, TableView, ListView,
                               RemoveButton, SingleDimensionTableModel, AddButton,
                               WarningMessage, InfoMessage)
@@ -102,11 +103,7 @@ class DbConnection(BaseWidget):
             modelTablesName = QSqlTableModel()
             self.ui.dbTables.proxyModel.setSourceModel(modelTablesName)
             queryTablesName = QSqlQuery()
-            queryTablesName.prepare("""
-                SELECT TABLE_NAME
-                FROM INFORMATION_SCHEMA.TABLES
-                WHERE TABLE_TYPE='BASE TABLE'
-            """)
+            queryTablesName.prepare(sql_queries.TABLES_NAME)
             if queryTablesName.exec():
                 modelTablesName.setQuery(queryTablesName)
                 settings.s('servername', self.serverInput.text().strip())
@@ -165,11 +162,7 @@ class DbTablesName(BaseWidget):
             modelTableTitles = QSqlTableModel()
             self.ui.dbTitles.proxyModel.setSourceModel(modelTableTitles)
             queryTableTitles = QSqlQuery()
-            queryTableTitles.prepare("""
-                SELECT COLUMN_NAME
-                FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_NAME = ?
-            """)
+            queryTableTitles.prepare(sql_queries.COLUMNS_NAME)
             queryTableTitles.addBindValue(self.selected_index)
 
             if queryTableTitles.exec():

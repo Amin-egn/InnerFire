@@ -88,12 +88,10 @@ class Entrance(BaseWidget):
         else:
             if titleList:
                 # excel
-                self.excelResponse.show()
                 self.excelResponse.excelCheckListModel.items = titleList
                 self.excelResponse.excelCheckListModel.layoutChanged.emit()
+                self.excelResponse.exec()
 
-            else:
-                print('No Excel Selected !')
 
     def _database(self):
         # database

@@ -41,6 +41,7 @@ class ExcelResponse(BaseDialog):
         checkedItems = list()
         try:
             for i in sorted(self.excelCheckListModel.checkList):
+                # todo: duplicate Excel titles
                 checkedItems.append(self.excelCheckListModel.items[i])
 
             self.excelTableModel.header = ['Excel Titles']

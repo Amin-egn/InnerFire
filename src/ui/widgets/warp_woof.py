@@ -7,15 +7,15 @@ from PyQt5.QtWidgets import QLabel, QFrame, QHBoxLayout, QVBoxLayout, QComboBox
 
 
 # noinspection PyUnresolvedReferences
-class InnerImport(BaseWidget):
-    """Inner Import"""
+class WarpWoof(BaseWidget):
+    """Warp And Woof"""
     def _craftWidget(self):
         self._guide()
         self._importer()
 
     def _guide(self):
         text = 'Attention ! \n' \
-               'Before you cast, You must be sure. Please leave no rows empty'
+               'Before next stage, You must be sure. Please leave no rows empty'
         self.lblGuide = QLabel(text)
         self.generalLayout.addWidget(self.lblGuide)
 
