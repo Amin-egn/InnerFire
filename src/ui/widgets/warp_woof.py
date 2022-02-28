@@ -40,7 +40,6 @@ class WarpWoof(BaseWidget):
         self.lblExcel = QLabel('Excel Titles')
         # model
         self.innerExcelTitleModel = DragList()
-        self.innerExcelTitleModel.setItems(['Name', 'Lastname', 'Tell', 'Code'])
         # view
         self.innerExcelTitleView = ListView(self.innerExcelTitleModel)
         self.innerExcelTitleView.setAlternatingRowColors(True)
@@ -67,7 +66,6 @@ class WarpWoof(BaseWidget):
         self.innerDbLayout.setAlignment(Qt.AlignHCenter)
         # widget
         self.innerDbTitleWidget = TableWidget(['Title', 'Combobox', 'Droppables'])
-        self.innerDbTitleWidget.setRowRecords(['Names', 'LastNames', 'Codes', 'Fullnames'])
         self.innerDbTitleWidget.setMinimumWidth(400)
         # button
         self.btnNextStage = FireButton('Cast')
@@ -91,7 +89,17 @@ class WarpWoof(BaseWidget):
         self.dragInput.intValid(trufal)
 
     def _importHandler(self):
-        self.innerDbTitleWidget.getListRecords()
+        titleList = self.ui.entrance.titleList
+        record_holder = self.innerDbTitleWidget.getListRecords()
+        for value in record_holder.values():
+            if value:
+                for i in value:
+                    insert = 0
+                    if i in titleList:
+                        rep = titleList.index(i)
+                        value.remove(i)
+                        value.insert(insert, rep)
+                        insert += 1
 
     def _connectSignals(self):
         # combobox
