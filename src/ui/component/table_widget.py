@@ -33,7 +33,7 @@ class TableWidget(QTableWidget):
         for i in range(self.recLen):
             record_dict[self.item(i, 0).text()] = self.cellWidget(i, col).getMembers()
 
-        print(record_dict)
+        return record_dict
 
     def comboIndexChanged(self, index):
         selected_row_list = self.cellWidget(self.currentRow(), 2)

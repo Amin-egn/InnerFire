@@ -1,0 +1,16 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="icons">
+        <!-- messages -->
+        <file alias="warning">reaper.png</file>
+        <file alias="question">orc.png</file>
+        <file alias="information">people.png</file>
+        <!-- icons -->
+        <file alias="database">money-bag.png</file>
+        <file alias="excel">spell.png</file>
+        <file alias="logo">innerfire.png</file>
+        <file alias="crystal">crystal.png</file>
+        <file alias="book">book.png</file>
+        <file alias="map">map.png</file>
+    </qresource>
+</RCC>
