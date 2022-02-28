@@ -68,27 +68,27 @@ class Entrance(BaseWidget):
 
     def _openExcel(self):
         # empty list
-        titleList = list()
+        self.titleList = list()
         try:
             path = QFileDialog.getOpenFileName(
                 self, 'Open file', '',
                 'Excel files (*.xlsx *.xlsm *.xltx *.xltm)')[0]
             if path:
-                wb = load_workbook(path)
+                wb = load_workbook(path, data_only=True)
                 sheet = wb.active
                 for cell in sheet.iter_cols(max_row=1, values_only=True):
                     index = cell[0]
                     if index:
                         strip_index = str(index).strip()
-                        titleList.append(strip_index)
+                        self.titleList.append(strip_index)
 
         except Exception as e:
             print(str(e))
 
         else:
-            if titleList:
+            if self.titleList:
                 # excel
-                self.excelResponse.excelCheckListModel.items = titleList
+                self.excelResponse.excelCheckListModel.items = self.titleList
                 self.excelResponse.excelCheckListModel.layoutChanged.emit()
                 self.excelResponse.exec()
 
