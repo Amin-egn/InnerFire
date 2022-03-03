@@ -2,7 +2,7 @@
 from .base import BaseWidget
 from .excel import ExcelResponse
 from .database import DbResponse
-from src.ui.component import FireButton
+from src.ui.component import FireButton, LockedTableView
 # external
 from openpyxl import load_workbook
 # pyqt
@@ -21,9 +21,11 @@ class Entrance(BaseWidget):
         self._nextStage()
         self.excelResponse = ExcelResponse(self)
         # Excel collector list
-        self.listExcelDataCollector = list()
+        self.excelDataCollectorList = list()
         # table collector list
         self.listTableDataCollector = list()
+        # temporary
+        self.dbName = ''
 
     def _actionButtons(self):
         # button layout
@@ -48,7 +50,11 @@ class Entrance(BaseWidget):
         # layout
         self.modelsLayout = QHBoxLayout()
         self.modelsFrame.setLayout(self.modelsLayout)
+        # views
+        # - excel
+        self.excelTableView = LockedTableView(None)
         # attach
+        # - general
         self.generalLayout.addWidget(self.modelsFrame)
 
     def _nextStage(self):
@@ -75,8 +81,8 @@ class Entrance(BaseWidget):
                 'Excel files (*.xlsx *.xlsm *.xltx *.xltm)')[0]
             if path:
                 wb = load_workbook(path, data_only=True)
-                sheet = wb.active
-                for cell in sheet.iter_cols(max_row=1, values_only=True):
+                self.sheet = wb.active
+                for cell in self.sheet.iter_cols(max_row=1, values_only=True):
                     index = cell[0]
                     if index:
                         strip_index = str(index).strip()
@@ -87,16 +93,25 @@ class Entrance(BaseWidget):
 
         else:
             if self.titleList:
+                self.excelDataCollectorList.clear()
+                self.excelTableView.setModel(None)
                 # excel
-                self.excelResponse.excelCheckListModel.items = self.titleList
-                self.excelResponse.excelCheckListModel.layoutChanged.emit()
+                self.excelResponse.excelListModel.setItems(self.titleList)
                 self.excelResponse.exec()
-
 
     def _database(self):
         # database
         self.dbResponse = DbResponse(self)
         self.dbResponse.show()
+
+    def createExcelView(self, model):
+        if model:
+            self.excelTableView.setModel(model)
+            self.modelsLayout.addWidget(self.excelTableView)
+            print(self.excelDataCollectorList)
+        else:
+            self.excelDataCollectorList.clear()
+            self.excelTableView.setModel(None)
 
     def checkWidgetNumbers(self):
         if self.excelWidgetSignal and self.databaseWidgetSignal:
