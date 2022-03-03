@@ -34,22 +34,23 @@ class MainWindow(QMainWindow):
         # Entrance
         self.entrance = widgets.Entrance(self)
         # WarpWoof
-        self.warpWoof = widgets.WarpWoof(self)
+        # self.warpWoof = widgets.WarpWoof(self)
         # InnerImport
-        self.innerImport = widgets.InnerImport(self)
+        # self.innerImport = widgets.InnerImport(self)
         # attach
         self.generalLayout.addWidget(self.entrance)
-        self.generalLayout.addWidget(self.warpWoof)
-        self.generalLayout.addWidget(self.innerImport)
+        # self.generalLayout.addWidget(self.warpWoof)
+        # self.generalLayout.addWidget(self.innerImport)
 
     def widgetsHandler(self, index=0):
         self.generalLayout.setCurrentIndex(index)
-        if index == 1:
-            self.warpWoof.innerExcelTitleModel.setItems(self.entrance.listExcelDataCollector)
-            self.warpWoof.innerDbTitleWidget.setRowRecords(self.entrance.listTableDataCollector)
+        # if index == 1:
+        #     self.warpWoof.innerExcelTitleModel.setItems(self.entrance.listExcelDataCollector)
+        #     self.warpWoof.innerDbTitleWidget.setRowRecords(self.entrance.listTableDataCollector)
 
     def _connectSignals(self):
         self.entrance.btnNextStage.clicked.connect(lambda: self.widgetsHandler(1))
+        # self.warpWoof.btnNextStage.clicked.connect(lambda: self.widgetsHandler(2))
 
     def _craftStyle(self):
         self.setStyleSheet("""

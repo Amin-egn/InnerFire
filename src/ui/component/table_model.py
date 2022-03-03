@@ -36,6 +36,18 @@ class TableModel(QAbstractTableModel):
         self.endResetModel()
         self.layoutChanged.emit()
 
+    def addRecord(self, record):
+        self.beginResetModel()
+        self.records.append(record)
+        self.endResetModel()
+        self.layoutChanged.emit()
+
+    def removeRecord(self, record):
+        self.beginResetModel()
+        self.records.remove(record)
+        self.endResetModel()
+        self.layoutChanged.emit()
+
     def clearRecords(self):
         self.setRecords([])
 

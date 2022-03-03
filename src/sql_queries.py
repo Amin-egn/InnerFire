@@ -21,6 +21,6 @@ COLUMNS_PRIMARY_KEY = """
 
 # insert values
 INSERT_TO_TABLE = """
-    INSERT INTO ? ({})
+    INSERT INTO {} ({})
     VALUES ({})
 """
