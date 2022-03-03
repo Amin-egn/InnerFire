@@ -31,9 +31,9 @@ class Entrance(BaseWidget):
         self.buttonsLayout.setContentsMargins(0, 10, 0, 0)
         self.buttonsLayout.setAlignment(Qt.AlignHCenter)
         # excel button
-        self.btnExcel = FireButton('Read Excel', icon='./src/ui/resources/spell.png')
+        self.btnExcel = FireButton('Read Excel', icon=':/icons/excel')
         # data base button
-        self.btnDb = FireButton('Query Data-Base', icon='./src/ui/resources/money-bag.png')
+        self.btnDb = FireButton('Query Data-Base', icon=':/icons/database')
         # attach
         self.buttonsLayout.addWidget(self.btnExcel)
         self.buttonsLayout.addWidget(self.btnDb)

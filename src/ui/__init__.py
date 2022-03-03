@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
     def _bootstrap(self):
         self.setWindowTitle('Inner Fire')
         self.setMinimumSize(600, 480)
-        self.setWindowIcon(QIcon('./src/ui/resources/innerfire.png'))
+        self.setWindowIcon(QIcon(':/icons/logo'))
         # central widget
         self._mainWidget = QWidget(self)
         self.setCentralWidget(self._mainWidget)
@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
         self.generalLayout.addWidget(self.warpWoof)
         self.generalLayout.addWidget(self.innerImport)
 
-    def widgetsHandler(self, index=2):
+    def widgetsHandler(self, index=0):
         self.generalLayout.setCurrentIndex(index)
         if index == 1:
             self.warpWoof.innerExcelTitleModel.setItems(self.entrance.listExcelDataCollector)

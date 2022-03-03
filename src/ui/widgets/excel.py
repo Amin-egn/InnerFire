@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QHBoxLayout
 class ExcelResponse(BaseDialog):
     """Excel Responsible"""
     def _craftDialog(self):
-        self.setWindowUnits('Excel Titles', './src/ui/resources/spell.png')
+        self.setWindowUnits('Excel Titles', ':/icons/excel')
         # self modification
         self.setFixedWidth(380)
         # checklist model

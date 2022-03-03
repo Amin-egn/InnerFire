@@ -10,7 +10,7 @@ class BaseMessage(QMessageBox):
     TITLE = 'Base Message'
     ICON = QMessageBox.NoIcon
     BUTTONS = QMessageBox.Ok
-    FLAGICON = './src/ui/resources/book.png'
+    FLAGICON = ':/icons/book'
 
     def __init__(self, text, parent=None):
         super().__init__(parent)
@@ -50,19 +50,19 @@ class BaseMessage(QMessageBox):
 class WarningMessage(BaseMessage):
     """Warning Message"""
     TITLE = 'InnerFire-Error!!!'
-    ICON = './src/ui/resources/reaper.png'
+    ICON = ':/icons/warning'
     BUTTONS = QMessageBox.Ok
 
 
 class QuestionMessage(BaseMessage):
     """Question Message"""
     TITLE = 'InnerFire-Question?'
-    ICON = './src/ui/resources/orc.png'
+    ICON = ':/icons/question'
     BUTTONS = QMessageBox.Yes | QMessageBox.No
 
 
 class InfoMessage(BaseMessage):
     """Information Message"""
     TITLE = 'InnerFire-Info!'
-    ICON = './src/ui/resources/people.png'
+    ICON = ':/icons/information'
     BUTTONS = QMessageBox.Ok

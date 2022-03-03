@@ -23,7 +23,7 @@ class DbResponse(BaseDialog):
         self.setLayout(self.generalLayout)
 
     def _craftDialog(self):
-        self.setWindowUnits('Database', './src/ui/resources/money-bag.png')
+        self.setWindowUnits('Database', ':/icons/database')
         self.setFixedWidth(380)
         self._widgetInstances()
         self.menuHandler(0)

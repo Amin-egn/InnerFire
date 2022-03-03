@@ -1,6 +1,8 @@
 # standard
 import sys
 # internal
+# noinspection PyUnresolvedReferences
+from src.ui import resources
 from src.ui import MainWindow
 # pyqt
 from PyQt5.QtWidgets import QApplication
