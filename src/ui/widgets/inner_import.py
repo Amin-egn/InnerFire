@@ -1,10 +1,12 @@
-# standard
+# internal
 from .base import BaseWidget
 from src.ui.component import FireButton
+from src import sql_queries
 # pyqt
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QLabel, QFrame, QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QCheckBox, QSpinBox,
                              QScrollArea, QProgressBar)
+from PyQt5.QtSql import QSqlQuery
 
 
 class InnerImport(BaseWidget):
@@ -38,6 +40,7 @@ class InnerImport(BaseWidget):
         self.spnMinRow = QSpinBox()
         # -- checkboxes
         self.chkValues = QCheckBox('Values', self)
+        self.chkValues.setChecked(True)
         # button
         self.btnCast = FireButton('Cast !')
         # attach
@@ -72,8 +75,27 @@ class InnerImport(BaseWidget):
         self.progressBar = QProgressBar()
         self.generalLayout.addWidget(self.progressBar)
 
+    def _importToDb(self):
+        queryToTable = QSqlQuery()
+        table_cols = self.mapDict.keys()
+        cols_range = len(table_cols)
+        cols_name = ', '.join(table_cols)
+
+        query_insert = sql_queries.INSERT_TO_TABLE.format(
+            self.ui.entrance.dbName,
+            cols_name,
+            ', '.join(['?' for _ in range(cols_range)])
+        )
+        queryToTable.prepare(query_insert)
+
+        for row in self.ui.entrance.sheet.iter_rows(min_row=1, values_only=True):
+            for col in table_cols:
+                queryToTable.addBindValue(row[self.mapDict[col][0]])
+
+            queryToTable.exec()
+
     def _connectSignals(self):
-        self.btnCast.clicked.connect(lambda: print(self.mapDict))
+        self.btnCast.clicked.connect(self._importToDb)
 
     def _craftStyle(self):
         self.setStyleSheet("""

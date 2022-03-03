@@ -98,6 +98,7 @@ class DbConnection(BaseWidget):
 
     def _makeConnection(self, params):
         error = None
+        # ToDo -> redo connection here and *remove self refrence
         self.createConn = craftConnection(params)
         if self.createConn:
             modelTablesName = QSqlTableModel()
@@ -248,6 +249,8 @@ class DbTableTitles(BaseWidget):
         self.dbTitleTableModel.header = [f'{self.ui.dbTables.selected_index}\'s Titles']
         self.dbTitleTableModel.setRecords(self.listTitleName)
         self.ui.ui.databaseWidgetSignal = 1
+        # ToDo -> resolve this problem
+        self.ui.ui.dbName = self.ui.dbTables.selected_index
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):

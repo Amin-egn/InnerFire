@@ -101,6 +101,8 @@ class WarpWoof(BaseWidget):
                         value.insert(insert, rep)
                         insert += 1
 
+        self.ui.innerImport.mapDict.update(record_holder)
+
     def _connectSignals(self):
         # combobox
         self.comboBox.currentIndexChanged.connect(self._dragInputHandler)
