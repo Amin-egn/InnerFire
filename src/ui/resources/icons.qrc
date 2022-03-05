@@ -12,5 +12,6 @@
         <file alias="crystal">crystal.png</file>
         <file alias="book">book.png</file>
         <file alias="map">map.png</file>
+        <file alias="back_arrow">arrow-right.png</file>
     </qresource>
 </RCC>
