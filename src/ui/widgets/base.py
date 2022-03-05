@@ -10,6 +10,7 @@ class BaseWidget(QWidget):
         self._bootstrap()
 
     def _bootstrap(self):
+        self._initialize()
         self._craftLayout()
         self._craftWidget()
         self._craftStyle()
@@ -20,6 +21,9 @@ class BaseWidget(QWidget):
         self.generalLayout.setContentsMargins(5, 7, 5, 5)
         self.setLayout(self.generalLayout)
 
+    def _initialize(self):
+        pass
+
     def _craftWidget(self):
         pass
 
@@ -28,3 +32,6 @@ class BaseWidget(QWidget):
 
     def _connectSignals(self):
         pass
+
+    def reset(self):
+        self._initialize()

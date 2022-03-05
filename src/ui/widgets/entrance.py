@@ -12,20 +12,22 @@ from PyQt5.QtWidgets import QHBoxLayout, QLabel, QFileDialog, QFrame
 
 class Entrance(BaseWidget):
     """Entrance"""
+    def _initialize(self):
+        # Excel collector list
+        self.excelDataCollectorList = list()
+        # table collector list
+        self.dbDataCollectorDict = dict()
+
     def _craftWidget(self):
-        self.excelWidgetSignal = 0
-        self.databaseWidgetSignal = 0
         self._actionButtons()
         # self._tableWidget()
         self._modelsFrame()
         self._nextStage()
+        # Excel
         self.excelResponse = ExcelResponse(self)
-        # Excel collector list
-        self.excelDataCollectorList = list()
-        # table collector list
-        self.listTableDataCollector = list()
-        # temporary
-        self.dbName = ''
+        # database
+        # - response
+        self.dbResponse = DbResponse(self)
 
     def _actionButtons(self):
         # button layout
@@ -53,6 +55,8 @@ class Entrance(BaseWidget):
         # views
         # - excel
         self.excelTableView = LockedTableView(None)
+        # - database
+        self.dbTableView = LockedTableView(None)
         # attach
         # - general
         self.generalLayout.addWidget(self.modelsFrame)
@@ -75,47 +79,48 @@ class Entrance(BaseWidget):
     def _openExcel(self):
         # empty list
         self.titleList = list()
-        try:
-            path = QFileDialog.getOpenFileName(
-                self, 'Open file', '',
-                'Excel files (*.xlsx *.xlsm *.xltx *.xltm)')[0]
-            if path:
-                wb = load_workbook(path, data_only=True)
-                self.sheet = wb.active
-                for cell in self.sheet.iter_cols(max_row=1, values_only=True):
-                    index = cell[0]
-                    if index:
-                        strip_index = str(index).strip()
-                        self.titleList.append(strip_index)
+        path = QFileDialog.getOpenFileName(
+            self, 'Open file', '',
+            'Excel files (*.xlsx *.xlsm *.xltx *.xltm)')[0]
 
-        except Exception as e:
-            print(str(e))
+        if path:
+            wb = load_workbook(path, data_only=True)
+            self.sheet = wb.active
+            for cell in self.sheet.iter_cols(max_row=1, values_only=True):
+                index = cell[0]
+                if index:
+                    strip_index = str(index).strip()
+                    self.titleList.append(strip_index)
 
-        else:
-            if self.titleList:
-                self.excelDataCollectorList.clear()
-                self.excelTableView.setModel(None)
-                # excel
-                self.excelResponse.excelListModel.setItems(self.titleList)
-                self.excelResponse.exec()
+        if self.titleList:
+            self.excelDataCollectorList.clear()
+            self.excelResponse.excelTitleList.clear()
+            self.excelTableView.setModel(None)
+            self.excelResponse.selectedTitleTableModel.clearRecords()
+            # excel
+            self.excelResponse.excelListModel.setItems(self.titleList)
+            self.excelResponse.exec()
 
     def _database(self):
-        # database
-        self.dbResponse = DbResponse(self)
-        self.dbResponse.show()
+        self.dbResponse.exec()
 
     def createExcelView(self, model):
         if model:
             self.excelTableView.setModel(model)
             self.modelsLayout.addWidget(self.excelTableView)
-            print(self.excelDataCollectorList)
+
         else:
             self.excelDataCollectorList.clear()
             self.excelTableView.setModel(None)
 
-    def checkWidgetNumbers(self):
-        if self.excelWidgetSignal and self.databaseWidgetSignal:
-            self.btnNextStage.setEnabled(True)
+    def createDbView(self, model):
+        if model:
+            self.dbTableView.setModel(model)
+            self.modelsLayout.addWidget(self.dbTableView)
+            print(self.dbDataCollectorDict)
+
+        else:
+            print('target else entered!')
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):
