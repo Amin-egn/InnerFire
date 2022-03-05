@@ -37,6 +37,19 @@ class BaseButton(QPushButton):
         pass
 
 
+class SimpleButton(BaseButton):
+    """Simple Button"""
+    def _craftStyle(self):
+        self.setStyleSheet("""
+            SimpleButton {
+                border: 1px solid #7a7a7a;
+            }
+            SimpleButton:hover {
+                border: 1px solid #0074cf;
+            }
+        """)
+
+
 class FireButton(BaseButton):
     """Fire Button"""
     FONT = 'Lucida console'

@@ -55,9 +55,8 @@ class TableModel(QAbstractTableModel):
 class SingleDimensionTableModel(TableModel):
     """Drag and Drop Table"""
     def data(self, index, role):
-        row = self.records[index.row()]
         if role == Qt.DisplayRole:
-            return row
+            return self.records[index.row()]
 
     def isEmpty(self, index=0):
         if self.rowCount(index) == 0:
