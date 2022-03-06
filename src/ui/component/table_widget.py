@@ -38,7 +38,9 @@ class TableWidget(QTableWidget):
     def comboIndexChanged(self, index):
         selected_row_list = self.cellWidget(self.currentRow(), 2)
         selected_row_list.clear()
-        if index == 1 or index == 2:
+        if index == 0:
+            trufal = False
+        else:
             trufal = True
             if index == 1:
                 item = '_Null'
@@ -47,7 +49,35 @@ class TableWidget(QTableWidget):
 
             selected_row_list.addItem(item)
 
-        else:
-            trufal = False
-
         selected_row_list.setDisabled(trufal)
+
+
+class  PresentationTableWidget(QTableWidget):
+    """Presentation Table Widget"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._craftTable()
+
+    def _craftTable(self):
+        self.setAlternatingRowColors(True)
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setAutoScroll(True)
+        self.horizontalHeader().setMinimumWidth(60)
+        self.horizontalHeader().setStretchLastSection(True)
+        self.verticalHeader().setDefaultSectionSize(30)
+
+    def setTitles(self, titles):
+        self.setColumnCount(len(titles))
+        self.setHorizontalHeaderLabels(titles)
+
+    def setRowRecords(self, records):
+        self._getRowCount(records)
+        for index, elem in enumerate(records):
+            for i, e in enumerate(elem):
+                self.setItem(int(i), index, QTableWidgetItem(e))
+
+    def _getRowCount(self, nestlist):
+        holder = list()
+        for i in nestlist:
+            holder.append(len(i))
+        self.setRowCount(max(holder))
