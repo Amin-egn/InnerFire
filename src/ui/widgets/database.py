@@ -5,8 +5,7 @@ from src.db import craftConnection
 from src import sql_queries
 from src.ui.component import (FireButton, ReceiveInput, TableView, ListView,
                               RemoveButton, SingleDimensionTableModel, AddButton,
-                              WarningMessage, InfoMessage, SimpleButton, LockedTableView,
-                              TableModel)
+                              WarningMessage, InfoMessage, SimpleButton, LockedTableView)
 from src import settings
 # pyqt
 from PyQt5.QtCore import Qt, QPropertyAnimation
@@ -26,9 +25,9 @@ class DbResponse(BaseDialog):
     def _craftDialog(self):
         self.setWindowUnits('Database', ':/icons/database')
         self.setFixedWidth(480)
+        self.dataDict = self.ui.dbDataCollectorDict
         self._widgetInstances()
         self.menuHandler(0)
-        self.dataDict = self.ui.dbDataCollectorDict
 
     def _widgetInstances(self):
         self.dbConn = DbConnection(self)
@@ -48,18 +47,11 @@ class DbResponse(BaseDialog):
         self.animationOpacity.setDuration(600)
         self.animationOpacity.start()
 
-    def _createModel(self, dictionary):
-        dbModel = TableModel(list(dictionary.keys()))
-        dbModel.setRecords(list(dictionary.values()))
-        print(list(dictionary.values()))
-        return dbModel
-
     def closeEvent(self, event):
         self.dbTitles.fillDataDict()
-        if self.dataDict:
-            print(self.dataDict)
-            self.ui.createDbView(self._createModel(self.dataDict))
+        self.ui.createDbTable(list(self.dataDict.keys()), list(self.dataDict.values()))
 
+        self.ui.unlockNextStage()
         self.close()
 
 
@@ -166,8 +158,10 @@ class DbTablesName(BaseWidget):
         # search bar
         self.searchInput = ReceiveInput(placeHolder='Search table\'s name')
         # back button
+        # ToDo -> if user renewed connection, all selection would be clear
         self.btnBack = SimpleButton(icon=':/icons/back_arrow', size=(29, 29))
         self.btnBack.setToolTip('Connect to new Database')
+        self.btnBack.setDisabled(True)
         # attach
         # - main
         self.topLayout.addWidget(self.searchInput)
@@ -236,6 +230,10 @@ class DbTableTitles(BaseWidget):
             self.selectedTitleTableModel.header = [self.selectedTableName]
             self.selectedTitleTableModel.clearRecords()
 
+        if self.selectedTableName in self.ui.dataDict.keys():
+            self.selectedTitleList = self.ui.dataDict[self.selectedTableName]
+            self.selectedTitleTableModel.setRecords(self.selectedTitleList)
+
     def _craftWidget(self):
         self._topLayout()
         self._dbModelView()
@@ -296,6 +294,7 @@ class DbTableTitles(BaseWidget):
         self.generalLayout.addLayout(self.buttonLayout)
 
     def _innerToMainTable(self, status):
+        # ToDo -> redo here and user must can remove from table model
         selected_row = self.titlesListView.index(True)
         if status == 'add':
             if selected_row not in self.selectedTitleList:
@@ -309,7 +308,10 @@ class DbTableTitles(BaseWidget):
 
     def fillDataDict(self):
         if self.selectedTitleList:
-            self.ui.ui.dbDataCollectorDict[self.selectedTableName] = self.selectedTitleList
+            self.ui.dataDict[self.selectedTableName] = self.selectedTitleList
+        else:
+            if self.selectedTableName in self.ui.dataDict.keys():
+                del self.ui.dataDict[self.selectedTableName]
 
     def _backToTablesName(self):
         self.fillDataDict()

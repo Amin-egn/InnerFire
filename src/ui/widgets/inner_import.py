@@ -1,10 +1,10 @@
 # internal
 from .base import BaseWidget
-from src.ui.component import FireButton
+from src.ui.component import FireButton, ReceiveSpin
 from src import sql_queries
 # pyqt
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QLabel, QFrame, QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QCheckBox, QSpinBox,
+from PyQt5.QtWidgets import (QLabel, QFrame, QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QCheckBox,
                              QScrollArea, QProgressBar)
 from PyQt5.QtSql import QSqlQuery
 
@@ -37,7 +37,8 @@ class InnerImport(BaseWidget):
         self.checksGridLayout = QGridLayout()
         # - checkboxes
         # -- spinboxes
-        self.spnMinRow = QSpinBox()
+        self.spnMinRow = ReceiveSpin()
+        self.spnMinStartIncre = ReceiveSpin()
         # -- checkboxes
         self.chkValues = QCheckBox('Values', self)
         self.chkValues.setChecked(True)
@@ -47,6 +48,7 @@ class InnerImport(BaseWidget):
         # - grid
         self.checksGridLayout.addWidget(self.chkValues, 0, 0)
         self.checksGridLayout.addWidget(self.spnMinRow, 1, 0)
+        self.checksGridLayout.addWidget(self.spnMinStartIncre, 1, 1)
         # - main
         self.checkOptionsLayout.addLayout(self.checksGridLayout)
         self.checkOptionsLayout.addWidget(self.btnCast)

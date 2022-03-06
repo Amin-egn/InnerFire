@@ -82,6 +82,7 @@ class ExcelResponse(BaseDialog):
             self.ui.excelDataCollectorList.extend(self.excelTitleList)
             self.ui.createExcelView(self.selectedTitleTableModel)
 
+        self.ui.unlockNextStage()
         self.close()
 
     # noinspection PyUnresolvedReferences

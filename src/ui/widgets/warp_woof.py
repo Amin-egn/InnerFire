@@ -11,7 +11,8 @@ class WarpWoof(BaseWidget):
     """Warp And Woof"""
     def _craftWidget(self):
         self._guide()
-        self._importer()
+        self._warpWoofer()
+        self._wrapWoofFooter()
 
     def _guide(self):
         text = 'Attention ! \n' \
@@ -19,20 +20,23 @@ class WarpWoof(BaseWidget):
         self.lblGuide = QLabel(text)
         self.generalLayout.addWidget(self.lblGuide)
 
-    def _importer(self):
+    def _warpWoofer(self):
         # frame
-        self.importerFrame = QFrame(self)
+        self.warpWooferFrame = QFrame(self)
+        self.warpWooferFrame.setMinimumSize(580, 360)
+        self.warpWooferFrame.setObjectName('Table')
         # layout
-        self.importerLayout = QHBoxLayout()
-        self.importerFrame.setLayout(self.importerLayout)
+        self.warpWooferLayout = QHBoxLayout()
+        self.warpWooferLayout.setContentsMargins(5, 5, 5, 5)
+        self.warpWooferFrame.setLayout(self.warpWooferLayout)
         # Excel
-        self._innerExcel()
+        self._warpWoofExcel()
         # Database
-        self._innerDatabase()
+        self._warpWoofDatabase()
         # attach
-        self.generalLayout.addWidget(self.importerFrame)
+        self.generalLayout.addWidget(self.warpWooferFrame)
 
-    def _innerExcel(self):
+    def _warpWoofExcel(self):
         # excel layout
         self.innerExcelLayout = QVBoxLayout()
         self.innerExcelLayout.setAlignment(Qt.AlignHCenter)
@@ -40,11 +44,11 @@ class WarpWoof(BaseWidget):
         self.lblExcel = QLabel('Excel Titles')
         # model
         self.innerExcelTitleModel = DragList()
+        self.innerExcelTitleModel.setItems(['foo', 'bar', 'baz', 'qux'])
         # view
         self.innerExcelTitleView = ListView(self.innerExcelTitleModel)
-        self.innerExcelTitleView.setAlternatingRowColors(True)
         self.innerExcelTitleView.setDragEnabled(True)
-        self.innerExcelTitleView.setMinimumWidth(175)
+        self.innerExcelTitleView.setMinimumWidth(170)
         # input combobox
         self.comboBox = QComboBox()
         self.comboBox.addItem('String')
@@ -58,23 +62,29 @@ class WarpWoof(BaseWidget):
         self.innerExcelLayout.addWidget(self.comboBox)
         self.innerExcelLayout.addWidget(self.dragInput)
         # - importer
-        self.importerLayout.addLayout(self.innerExcelLayout)
+        self.warpWooferLayout.addLayout(self.innerExcelLayout)
 
-    def _innerDatabase(self):
-        # database layout
-        self.innerDbLayout = QVBoxLayout()
-        self.innerDbLayout.setAlignment(Qt.AlignHCenter)
+    def _warpWoofDatabase(self):
         # widget
         self.innerDbTitleWidget = TableWidget(['Title', 'Combobox', 'Droppables'])
         self.innerDbTitleWidget.setMinimumWidth(400)
+        d = {'Amin': ['kala', 'mashin', 'laptop'], 'Samira': ['kolah'], 'Javad': ['bache', 'shekam']}
+        self.innerDbTitleWidget.setRowRecords(d)
+        # attach
+        # - warpwoof
+        self.warpWooferLayout.addWidget(self.innerDbTitleWidget)
+
+    def _wrapWoofFooter(self):
+        # layout
+        self.footerLayout = QHBoxLayout()
         # button
-        self.btnNextStage = FireButton('Cast')
+        self.btnNextStage = FireButton('Next Stage!')
         # attach
         # - main
-        self.innerDbLayout.addWidget(self.innerDbTitleWidget)
-        self.innerDbLayout.addWidget(self.btnNextStage)
-        # - importer
-        self.importerLayout.addLayout(self.innerDbLayout)
+        self.footerLayout.addStretch()
+        self.footerLayout.addWidget(self.btnNextStage)
+        # - general
+        self.generalLayout.addLayout(self.footerLayout)
 
     def _dragInputHandler(self, index):
         self.dragInput.clear()
@@ -88,23 +98,33 @@ class WarpWoof(BaseWidget):
         self.dragInput.setPlaceholderText(text)
         self.dragInput.intValid(trufal)
 
-    def _importHandler(self):
-        titleList = self.ui.entrance.titleList
-        record_holder = self.innerDbTitleWidget.getListRecords()
-        for value in record_holder.values():
-            if value:
-                for i in value:
-                    insert = 0
-                    if i in titleList:
-                        rep = titleList.index(i)
-                        value.remove(i)
-                        value.insert(insert, rep)
-                        insert += 1
-
-        self.ui.innerImport.mapDict.update(record_holder)
+    def _warpWoofHandler(self):
+        # titleList = self.ui.entrance.titleList
+        # record_holder = self.innerDbTitleWidget.getListRecords()
+        # for value in record_holder.values():
+        #     if value:
+        #         for i in value:
+        #             insert = 0
+        #             if i in titleList:
+        #                 rep = titleList.index(i)
+        #                 value.remove(i)
+        #                 value.insert(insert, rep)
+        #                 insert += 1
+        #
+        # print(record_holder)
+        # self.ui.innerImport.mapDict.update(record_holder)
+        # print(self.innerDbTitleWidget.getListRecords())
+        self.innerDbTitleWidget.getListRecords()
 
     def _connectSignals(self):
         # combobox
         self.comboBox.currentIndexChanged.connect(self._dragInputHandler)
         # cast button
-        self.btnNextStage.clicked.connect(self._importHandler)
+        self.btnNextStage.clicked.connect(self._warpWoofHandler)
+
+    def _craftStyle(self):
+        self.setStyleSheet("""
+            #Table {
+                border: 2px dot-dash #33892a;
+            }
+        """)

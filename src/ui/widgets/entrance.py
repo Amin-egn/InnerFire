@@ -2,7 +2,7 @@
 from .base import BaseWidget
 from .excel import ExcelResponse
 from .database import DbResponse
-from src.ui.component import FireButton, LockedTableView
+from src.ui.component import FireButton, LockedTableView, PresentationTableWidget
 # external
 from openpyxl import load_workbook
 # pyqt
@@ -55,9 +55,14 @@ class Entrance(BaseWidget):
         # views
         # - excel
         self.excelTableView = LockedTableView(None)
+        self.excelTableView.hide()
         # - database
-        self.dbTableView = LockedTableView(None)
+        self.dbTableWidget = PresentationTableWidget()
+        self.dbTableWidget.hide()
         # attach
+        # - main
+        self.modelsLayout.addWidget(self.excelTableView)
+        self.modelsLayout.addWidget(self.dbTableWidget)
         # - general
         self.generalLayout.addWidget(self.modelsFrame)
 
@@ -107,20 +112,31 @@ class Entrance(BaseWidget):
     def createExcelView(self, model):
         if model:
             self.excelTableView.setModel(model)
-            self.modelsLayout.addWidget(self.excelTableView)
+            self.excelTableView.show()
 
         else:
             self.excelDataCollectorList.clear()
             self.excelTableView.setModel(None)
 
-    def createDbView(self, model):
-        if model:
-            self.dbTableView.setModel(model)
-            self.modelsLayout.addWidget(self.dbTableView)
-            print(self.dbDataCollectorDict)
+    def createDbTable(self, headers, records):
+        if headers and records:
+            self.dbTableWidget.setTitles(headers)
+            self.dbTableWidget.setRowRecords(records)
+            self.dbTableWidget.show()
 
         else:
-            print('target else entered!')
+            self.dbTableWidget.clear()
+            self.dbDataCollectorDict.clear()
+
+    def unlockNextStage(self):
+        if self.excelDataCollectorList and self.dbDataCollectorDict:
+            self.btnNextStage.setEnabled(True)
+        else:
+            self.btnNextStage.setDisabled(True)
+            if not self.excelDataCollectorList:
+                self.excelTableView.hide()
+            if not self.dbDataCollectorDict:
+                self.dbTableWidget.hide()
 
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):
