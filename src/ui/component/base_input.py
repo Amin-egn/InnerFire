@@ -1,8 +1,9 @@
 # pyqt
 from PyQt5.QtGui import QIntValidator
-from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLineEdit, QSpinBox
 
 
+# noinspection PyTypeChecker
 class BaseInput(QLineEdit):
     """Base Input"""
     HEIGHT = 0
@@ -29,7 +30,7 @@ class BaseInput(QLineEdit):
             self.setPlaceholderText(self._placeHolder)
 
         if self._textSelect:
-            self.mousePressEvent = lambda _ : self.selectAll()
+            self.mousePressEvent = lambda _: self.selectAll()
 
         if self._intVal:
             self.setValidator(QIntValidator())
@@ -37,8 +38,8 @@ class BaseInput(QLineEdit):
         if self._draggable:
             self.setDragEnabled(True)
 
-    def intValid(self, bool):
-        if bool:
+    def intValid(self, boolean):
+        if boolean:
             self.setValidator(QIntValidator())
         else:
             self.setValidator(None)
@@ -50,3 +51,28 @@ class BaseInput(QLineEdit):
 class ReceiveInput(BaseInput):
     """Receive Input"""
     HEIGHT = 29
+
+
+class BaseSpinbox(QSpinBox):
+    """Base Spinbox"""
+    SIZE = ()
+
+    def __init__(self, *args, **kwargs):
+        self._size = kwargs.pop('size', self.SIZE)
+        super().__init__(*args, **kwargs)
+        self._bootstrap()
+
+    def _bootstrap(self):
+        self._craftSpin()
+        self._craftSpin()
+
+    def _craftSpin(self):
+        self.setFixedSize(*self._size)
+
+    def _craftStyle(self):
+        pass
+
+
+class ReceiveSpin(BaseSpinbox):
+    """Receive Spinbox"""
+    SIZE = (50, 30)

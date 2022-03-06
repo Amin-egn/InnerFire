@@ -21,19 +21,34 @@ class TableWidget(QTableWidget):
         self.verticalHeader().setDefaultSectionSize(30)
 
     def setRowRecords(self, records):
-        self.recLen = len(records)
-        self.setRowCount(self.recLen)
-        for i, rec in enumerate(records):
-            self.setItem(int(i), 0, QTableWidgetItem(rec))
-            self.setCellWidget(i, 1, ComboBox(['Droppable', 'Null', 'Auto Increment'], self))
-            self.setCellWidget(i, 2, DropList())
+        self.recordsDict = records
+        self._getRowCount(list(self.recordsDict.values()))
+        row = 0
+        for key, val in self.recordsDict.items():
+            for elem in val:
+                self.setItem(row, 0, QTableWidgetItem(f'{key}-{elem}'))
+                self.setCellWidget(row, 1, ComboBox(['Droppable', 'Null', 'Auto Increment'], self))
+                self.setCellWidget(row, 2, DropList())
+                row += 1
+
+    def _getRowCount(self, nestlist):
+        holder = list()
+        for i in nestlist:
+            holder.append(len(i))
+
+        self.rowLen = sum(holder)
+        self.setRowCount(self.rowLen)
 
     def getListRecords(self, col=2):
-        record_dict = dict()
-        for i in range(self.recLen):
-            record_dict[self.item(i, 0).text()] = self.cellWidget(i, col).getMembers()
+        record_dict = dict.fromkeys(self.recordsDict.keys(), {})
+        for i in range(self.rowLen):
+            first_column = self.item(i, 0).text().partition('-')
+            dict_key = first_column[0]
+            record_dict[dict_key][first_column[2]] = self.cellWidget(i, col).getMembers()
 
-        return record_dict
+            print(dict_key)
+
+        # return record_dict
 
     def comboIndexChanged(self, index):
         selected_row_list = self.cellWidget(self.currentRow(), 2)
@@ -52,7 +67,7 @@ class TableWidget(QTableWidget):
         selected_row_list.setDisabled(trufal)
 
 
-class  PresentationTableWidget(QTableWidget):
+class PresentationTableWidget(QTableWidget):
     """Presentation Table Widget"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,7 +76,6 @@ class  PresentationTableWidget(QTableWidget):
     def _craftTable(self):
         self.setAlternatingRowColors(True)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.setAutoScroll(True)
         self.horizontalHeader().setMinimumWidth(60)
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().setDefaultSectionSize(30)
@@ -72,9 +86,10 @@ class  PresentationTableWidget(QTableWidget):
 
     def setRowRecords(self, records):
         self._getRowCount(records)
+        self.clearContents()
         for index, elem in enumerate(records):
             for i, e in enumerate(elem):
-                self.setItem(int(i), index, QTableWidgetItem(e))
+                self.setItem(i, index, QTableWidgetItem(e))
 
     def _getRowCount(self, nestlist):
         holder = list()

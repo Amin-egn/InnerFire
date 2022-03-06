@@ -11,6 +11,7 @@ class ListView(QListView):
 
     def _craftList(self):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setAlternatingRowColors(True)
 
     def index(self, val=False):
         indexes = self.selectedIndexes()
