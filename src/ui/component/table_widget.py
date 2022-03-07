@@ -40,15 +40,16 @@ class TableWidget(QTableWidget):
         self.setRowCount(self.rowLen)
 
     def getListRecords(self, col=2):
-        record_dict = dict.fromkeys(self.recordsDict.keys(), {})
+        record_dict = {}
         for i in range(self.rowLen):
-            first_column = self.item(i, 0).text().partition('-')
+            first_column = self.item(i, 0).text().split('-')
             dict_key = first_column[0]
-            record_dict[dict_key][first_column[2]] = self.cellWidget(i, col).getMembers()
+            if dict_key not in record_dict.keys():
+                record_dict[dict_key] = {}
 
-            print(dict_key)
+            record_dict[dict_key][first_column[1]] = self.cellWidget(i, col).getMembers()
 
-        # return record_dict
+        return record_dict
 
     def comboIndexChanged(self, index):
         selected_row_list = self.cellWidget(self.currentRow(), 2)
