@@ -1,6 +1,6 @@
 # internal
 from .base import BaseWidget
-from src.ui.component import FireButton, ReceiveSpin
+from src.ui.component import FireButton, ReceiveSpin, MessageLabel
 from src import sql_queries
 # pyqt
 from PyQt5.QtCore import Qt
@@ -11,8 +11,19 @@ from PyQt5.QtSql import QSqlQuery
 
 class InnerImport(BaseWidget):
     """Inner Import"""
+    def _initialize(self):
+        # self.mapDict = dict()
+        self.mapDict = {
+            'Ashkhaslist':
+                {'Name': [1, 2],
+                 'Fname': [2],
+                 'Lname': [1],
+                 'Address': ['_Null'],
+                 'Code': ['_AutoIncrement']
+                 }
+        }
+
     def _craftWidget(self):
-        self.mapDict = dict()
         self._guide()
         self._checkOptions()
         self._monitoring()
@@ -73,31 +84,70 @@ class InnerImport(BaseWidget):
         # - general
         self.generalLayout.addWidget(self.scroll)
 
+    def _messageLabel(self, message, level):
+        self.monitorLayout.insertWidget(0, MessageLabel(message, level))
+
     def _progressBar(self):
         self.progressBar = QProgressBar()
-        self.generalLayout.addWidget(self.progressBar)
+        # self.generalLayout.addWidget(self.progressBar)
 
-    def _importToDb(self):
-        queryToTable = QSqlQuery()
-        table_cols = self.mapDict.keys()
-        cols_range = len(table_cols)
-        cols_name = ', '.join(table_cols)
+    def _analyzeAndVerify(self):
+        table_names, maps = [], {}
+        for key, value in self.mapDict.items():
+            table_names.append(key)
+            maps.update(value)
 
-        query_insert = sql_queries.INSERT_TO_TABLE.format(
-            self.ui.entrance.dbName,
-            cols_name,
-            ', '.join(['?' for _ in range(cols_range)])
+        # self._importToDb()
+        self._createQuery(table_names[0], maps)
+
+    def _createQuery(self, table_name, map):
+        columns = map.keys()
+        query = sql_queries.INSERT_TO_TABLE.format(
+            table_name,
+            ', '.join(columns),
+            ', '.join(['?' for _ in range(len(columns))])
         )
-        queryToTable.prepare(query_insert)
 
-        for row in self.ui.entrance.sheet.iter_rows(min_row=1, values_only=True):
-            for col in table_cols:
-                queryToTable.addBindValue(row[self.mapDict[col][0]])
+        print(query)
 
-            queryToTable.exec()
+    def _importToDb(self, table_name, map):
+        # query
+        queryToTable = QSqlQuery()
+
+
+            # query_insert = sql_queries.INSERT_TO_TABLE.format(
+            #     table,
+            #     ', '.join(columns),
+            #     ', '.join(['?' for _ in range(len(columns))])
+            # )
+            # queryToTable.prepare(query_insert)
+            #
+            # for row in self.ui.entrance.sheet.iter_rows(min_row=self.spnMinRow.value(),
+            #                                             values_only=self.chkValues.isChecked()):
+
+
+
+
+        # table_cols = self.mapDict.keys()
+        # cols_range = len(table_cols)
+        # cols_name = ', '.join(table_cols)
+        #
+        # query_insert = sql_queries.INSERT_TO_TABLE.format(
+        #     self.ui.entrance.dbName,
+        #     cols_name,
+        #     ', '.join(['?' for _ in range(cols_range)])
+        # )
+        # queryToTable.prepare(query_insert)
+        #
+        # for row in self.ui.entrance.sheet.iter_rows(min_row=self.spnMinRow.value(),
+        #                                             values_only=self.chkValues.isChecked()):
+        #     for col in table_cols:
+        #         queryToTable.addBindValue(row[self.mapDict[col][0]])
+        #
+        #     queryToTable.exec()
 
     def _connectSignals(self):
-        self.btnCast.clicked.connect(self._importToDb)
+        self.btnCast.clicked.connect(self._analyzeAndVerify)
 
     def _craftStyle(self):
         self.setStyleSheet("""
