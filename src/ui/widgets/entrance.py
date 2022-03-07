@@ -138,10 +138,18 @@ class Entrance(BaseWidget):
             if not self.dbDataCollectorDict:
                 self.dbTableWidget.hide()
 
+    def _nextStageHandler(self):
+        self.ui.warpWoof.excelTitleModel.setItems(self.excelDataCollectorList)
+        self.ui.warpWoof.dbTitleWidget.setRowRecords(self.dbDataCollectorDict)
+
     # noinspection PyUnresolvedReferences
     def _connectSignals(self):
+        # Excel
         self.btnExcel.clicked.connect(self._openExcel)
+        # database
         self.btnDb.clicked.connect(self._database)
+        # next stage
+        self.btnNextStage.clicked.connect(self._nextStageHandler)
 
     def _craftStyle(self):
         self.setStyleSheet("""
