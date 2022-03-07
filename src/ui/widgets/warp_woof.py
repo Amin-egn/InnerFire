@@ -38,17 +38,17 @@ class WarpWoof(BaseWidget):
 
     def _warpWoofExcel(self):
         # excel layout
-        self.innerExcelLayout = QVBoxLayout()
-        self.innerExcelLayout.setAlignment(Qt.AlignHCenter)
+        self.excelLayout = QVBoxLayout()
+        self.excelLayout.setAlignment(Qt.AlignHCenter)
         # label
         self.lblExcel = QLabel('Excel Titles')
         # model
-        self.innerExcelTitleModel = DragList()
-        self.innerExcelTitleModel.setItems(['foo', 'bar', 'baz', 'qux'])
+        self.excelTitleModel = DragList()
+        self.excelTitleModel.setItems(['foo', 'bar', 'baz', 'qux'])
         # view
-        self.innerExcelTitleView = ListView(self.innerExcelTitleModel)
-        self.innerExcelTitleView.setDragEnabled(True)
-        self.innerExcelTitleView.setMinimumWidth(170)
+        self.excelTitleView = ListView(self.excelTitleModel)
+        self.excelTitleView.setDragEnabled(True)
+        self.excelTitleView.setMinimumWidth(170)
         # input combobox
         self.comboBox = QComboBox()
         self.comboBox.addItem('String')
@@ -57,22 +57,20 @@ class WarpWoof(BaseWidget):
         self.dragInput = ReceiveInput(placeHolder='Please insert strings', drag=True)
         # attach
         # - main
-        self.innerExcelLayout.addWidget(self.lblExcel)
-        self.innerExcelLayout.addWidget(self.innerExcelTitleView)
-        self.innerExcelLayout.addWidget(self.comboBox)
-        self.innerExcelLayout.addWidget(self.dragInput)
+        self.excelLayout.addWidget(self.lblExcel)
+        self.excelLayout.addWidget(self.excelTitleView)
+        self.excelLayout.addWidget(self.comboBox)
+        self.excelLayout.addWidget(self.dragInput)
         # - importer
-        self.warpWooferLayout.addLayout(self.innerExcelLayout)
+        self.warpWooferLayout.addLayout(self.excelLayout)
 
     def _warpWoofDatabase(self):
         # widget
-        self.innerDbTitleWidget = TableWidget(['Title', 'Combobox', 'Droppables'])
-        self.innerDbTitleWidget.setMinimumWidth(400)
-        d = {'Amin': ['kala', 'mashin', 'laptop'], 'Samira': ['kolah'], 'Javad': ['bache', 'shekam']}
-        self.innerDbTitleWidget.setRowRecords(d)
+        self.dbTitleWidget = TableWidget(['Title', 'Combobox', 'Droppables'])
+        self.dbTitleWidget.setMinimumWidth(400)
         # attach
         # - warpwoof
-        self.warpWooferLayout.addWidget(self.innerDbTitleWidget)
+        self.warpWooferLayout.addWidget(self.dbTitleWidget)
 
     def _wrapWoofFooter(self):
         # layout
@@ -98,29 +96,27 @@ class WarpWoof(BaseWidget):
         self.dragInput.setPlaceholderText(text)
         self.dragInput.intValid(trufal)
 
-    def _warpWoofHandler(self):
-        # titleList = self.ui.entrance.titleList
-        # record_holder = self.innerDbTitleWidget.getListRecords()
-        # for value in record_holder.values():
-        #     if value:
-        #         for i in value:
-        #             insert = 0
-        #             if i in titleList:
-        #                 rep = titleList.index(i)
-        #                 value.remove(i)
-        #                 value.insert(insert, rep)
-        #                 insert += 1
-        #
-        # print(record_holder)
-        # self.ui.innerImport.mapDict.update(record_holder)
-        # print(self.innerDbTitleWidget.getListRecords())
-        self.innerDbTitleWidget.getListRecords()
+    def _nextStageHandler(self):
+        titleList = self.ui.entrance.titleList
+        record_holder = self.dbTitleWidget.getListRecords()
+        for column in record_holder.values():
+            for drop_title in column.values():
+                if drop_title:
+                    for title in drop_title:
+                        insert = 0
+                        if i in titleList:
+                            rep = titleList.index(title)
+                            val.remove(title)
+                            val.insert(insert, rep)
+                            insert += 1
+
+        self.ui.innerImport.mapDict.update(record_holder)
 
     def _connectSignals(self):
         # combobox
         self.comboBox.currentIndexChanged.connect(self._dragInputHandler)
         # cast button
-        self.btnNextStage.clicked.connect(self._warpWoofHandler)
+        self.btnNextStage.clicked.connect(self._nextStageHandler)
 
     def _craftStyle(self):
         self.setStyleSheet("""
