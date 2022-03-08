@@ -104,10 +104,10 @@ class WarpWoof(BaseWidget):
                 if drop_title:
                     for title in drop_title:
                         insert = 0
-                        if i in titleList:
+                        if title in titleList:
                             rep = titleList.index(title)
-                            val.remove(title)
-                            val.insert(insert, rep)
+                            drop_title.remove(title)
+                            drop_title.insert(insert, rep)
                             insert += 1
 
         self.ui.innerImport.mapDict.update(record_holder)

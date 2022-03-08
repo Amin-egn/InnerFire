@@ -59,6 +59,10 @@ class BaseSpinbox(QSpinBox):
 
     def __init__(self, *args, **kwargs):
         self._size = kwargs.pop('size', self.SIZE)
+        self._fixText = kwargs.pop('fixText', None)
+        self._suffText = kwargs.pop('suffText', None)
+        self._minVal = kwargs.pop('minVal', None)
+        self._maxVal = kwargs.pop('maxVal', None)
         super().__init__(*args, **kwargs)
         self._bootstrap()
 
@@ -68,6 +72,17 @@ class BaseSpinbox(QSpinBox):
 
     def _craftSpin(self):
         self.setFixedSize(*self._size)
+        if self._fixText:
+            self.setPrefix(self._fixText)
+
+        if self._suffText:
+            self.setSuffix(self._suffText)
+
+        if self._minVal:
+            self.setMinimum(self._minVal)
+
+        if self._maxVal:
+            self.setMaximum(self._maxVal)
 
     def _craftStyle(self):
         pass
@@ -75,4 +90,4 @@ class BaseSpinbox(QSpinBox):
 
 class ReceiveSpin(BaseSpinbox):
     """Receive Spinbox"""
-    SIZE = (50, 30)
+    SIZE = (200, 30)
