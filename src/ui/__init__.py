@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
         self.generalLayout.addWidget(self.warpWoof)
         self.generalLayout.addWidget(self.innerImport)
 
-    def widgetsHandler(self, index=2):
+    def widgetsHandler(self, index=0):
         self.generalLayout.setCurrentIndex(index)
 
     def _connectSignals(self):

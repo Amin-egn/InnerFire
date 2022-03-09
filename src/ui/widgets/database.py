@@ -102,6 +102,7 @@ class DbConnection(BaseWidget):
             queryTablesName.prepare(sql_queries.TABLES_NAME)
             if queryTablesName.exec():
                 modelTablesName.setQuery(queryTablesName)
+                # ToDo -> check for conflict in settings.json
                 settings.s('servername', self.serverInput.text().strip())
                 settings.s('username', self.usernameInput.text().strip())
                 settings.s('databasename', self.dbnameInput.text().strip())
@@ -111,6 +112,9 @@ class DbConnection(BaseWidget):
             else:
                 error = 'Cannot connect to database please check parameters correctness'
                 print(queryTablesName.lastError())
+
+        else:
+            error = 'Cannot connect to database'
 
         if error:
             msg_err = WarningMessage(error, self)

@@ -44,7 +44,6 @@ class WarpWoof(BaseWidget):
         self.lblExcel = QLabel('Excel Titles')
         # model
         self.excelTitleModel = DragList()
-        self.excelTitleModel.setItems(['foo', 'bar', 'baz', 'qux'])
         # view
         self.excelTitleView = ListView(self.excelTitleModel)
         self.excelTitleView.setDragEnabled(True)
